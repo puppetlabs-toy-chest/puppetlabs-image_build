@@ -1,0 +1,77 @@
+FROM <%= image %>
+<% if maintainer %>MAINTAINER <%= maintainer %><% end %>
+
+ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %>
+
+<% if rocker %>MOUNT /opt/puppetlabs /etc/puppetlabs /root/.gem<% end %>
+
+<% if labels %>LABEL <%= labels.split(',').map { |g| g.split('=') }.map { |k,v| "#{k}=\"#{v}\"" }.join(' ') %><% end %>
+
+<% if os == 'ubuntu' or os == 'debian' %>
+RUN apt-get update && \
+    apt-get install -y wget<% if wget_version %>="$WGET_VERSION"-1ubuntu1<% end %> && \
+    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb && \
+    dpkg -i puppetlabs-release-pc1-"$CODENAME".deb && \
+    rm puppetlabs-release-pc1-"$CODENAME".deb && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+<% elsif os == 'centos' %>
+RUN rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm && \
+    yum upgrade -y && \
+    yum update -y && \
+    yum install -y puppet-agent-"$PUPPET_AGENT_VERSION" && \
+    yum clean all
+<% elsif os == 'alpine' %>
+RUN apk add --update \
+      ca-certificates \
+      pciutils \
+      ruby \
+      ruby-irb \
+      ruby-rdoc \
+      && \
+    echo http://dl-4.alpinelinux.org/alpine/edge/testing/ >> /etc/apk/repositories && \
+    apk add --update shadow && \
+    rm -rf /var/cache/apk/* && \
+    gem install puppet:"$PUPPET_VERSION" facter:"$FACTER_VERSION" && \
+    <%= puppet_path %> module install puppetlabs-apk
+
+# Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
+RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
+<% end %>
+
+RUN <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
+
+COPY Puppetfile /
+
+COPY <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
+
+<% if os == 'ubuntu' or os == 'debian' %>
+RUN apt-get update && \
+    <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && \
+    <%= puppet_path %> apply <%= manifest %> --verbose --show_diff  --summarize && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+<% elsif os == 'centos' %>
+RUN yum update -y && \
+    <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && \
+    <%= puppet_path %> apply <%= manifest %> --verbose --show_diff  --summarize && \
+    yum clean all
+<% elsif os == 'alpine' %>
+RUN apk update && \
+    <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && \
+    <%= puppet_path %> apply <%= manifest %> --verbose --show_diff  --summarize && \
+    rm -rf /var/cache/apk/*
+<% end %>
+
+<% unless disable_inventory %>
+LABEL com.puppet.inventory="/inventory.json"
+RUN <%= puppet_path %> module install puppetlabs-inventory && \
+    <%= puppet_path %> inventory all > /inventory.json
+<% end %>
+
+<% if expose %>EXPOSE <%= expose.gsub(',', ' ') %><% end %>
+
+<% if entrypoint %>ENTRYPOINT ["<%= entrypoint.split(',').to_s %>"]<% end %>
+<% if cmd %>CMD <%= cmd.split(',').to_s %><% end %>
