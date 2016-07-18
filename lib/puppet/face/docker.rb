@@ -147,6 +147,16 @@ Puppet::Face.define(:docker, '0.1.0') do
 		default_to { false }
   end
 
+  option '--hiera' do
+    summary 'Enable use of hiera during build'
+		default_to { false }
+  end
+
+  option '--puppetfile' do
+    summary 'Enable use of Puppetfile to install dependencies during build'
+		default_to { true }
+  end
+
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
     option '--image-name STRING' do
