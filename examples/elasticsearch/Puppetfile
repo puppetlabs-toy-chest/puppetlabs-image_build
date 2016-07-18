@@ -1,0 +1,10 @@
+forge 'https://forgeapi.puppetlabs.com'
+
+mod 'elasticsearch/elasticsearch'
+mod 'richardc/datacat'
+mod 'puppetlabs/java'
+mod 'puppetlabs/java_ks'
+mod 'puppetlabs/apt'
+mod 'ceritsc/yum'
+mod 'puppetlabs/stdlib'
+mod 'puppetlabs/dummy_service'
