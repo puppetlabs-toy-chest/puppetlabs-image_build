@@ -136,6 +136,8 @@ USAGE: puppet docker build [--image STRING]
 [--rocker]
 [--disable-inventory]
 [--image-name STRING]
+[--hiera]
+[--[no-]puppetfile]
 <manifest>
 
 Discovery resources (including packages, services, users and groups)
@@ -166,7 +168,7 @@ OPTIONS:
                                    the image if not autodetected
   --puppet-agent-version STRING  - Version of the Puppet Agent package to
                                    install
-  --puppetfile                   - Enable use of Puppetfile to install
+  --[no-]puppetfile              - Enable use of Puppetfile to install
                                    dependencies during build
   --r10k-version STRING          - Version of R10k to use for installing modules
                                    from Puppetfile

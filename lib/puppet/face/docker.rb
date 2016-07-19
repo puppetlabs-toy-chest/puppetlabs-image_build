@@ -152,7 +152,7 @@ Puppet::Face.define(:docker, '0.1.0') do
 		default_to { false }
   end
 
-  option '--puppetfile' do
+  option '--[no-]puppetfile' do
     summary 'Enable use of Puppetfile to install dependencies during build'
 		default_to { true }
   end

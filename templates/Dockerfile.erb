@@ -41,11 +41,12 @@ RUN apk add --update \
 RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
 <% end %>
 
+<% if puppetfile %>
 RUN <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
-
 COPY Puppetfile /
+<% end %>
 
-COPY <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
+COP <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
 
 <% if hiera %>
 COPY hiera.yaml /
@@ -54,19 +55,16 @@ COPY hieradata /
 
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN apt-get update && \
-    <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && \
-    <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if hiera %>--hiera_config=/hiera.yaml<% end %> && \
+    <% if puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %><%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if hiera %>--hiera_config=/hiera.yaml<% end %> && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 <% elsif os == 'centos' %>
 RUN yum update -y && \
-    <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && \
-    <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if hiera %>--hiera_config=/hiera.yaml<% end %>&& \
+    <% if puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %><%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if hiera %>--hiera_config=/hiera.yaml<% end %>&& \
     yum clean all
 <% elsif os == 'alpine' %>
 RUN apk update && \
-    <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && \
-    <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if hiera %>--hiera_config=/hiera.yaml<% end %> && \
+    <% if puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %><%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if hiera %>--hiera_config=/hiera.yaml<% end %> && \
     rm -rf /var/cache/apk/*
 <% end %>
 
