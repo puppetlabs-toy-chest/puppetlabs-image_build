@@ -23,6 +23,15 @@ the nginx example. We can fix that with a few extra arguments.
 
     puppet docker build manifests/init.pp --image-name puppet/sample --cmd nginx --expose 80
 
+If you would rather use the
+[Rocker](https://github.com/grammarly/rocker) build tool you can do so with the
+following flag.
+
+    puppet docker build manifests/init.pp --image-name puppet/sample --cmd nginx --expose 80 --rocker
+
+Note that using Rocker means that the Puppet tools are not left in the
+image, potentially drastically reducing it's size.
+
 See the full help for other arguments for specificing a different
 base image, setting a maintainer, using Rocker instead of Docker for the
 build and much more.

@@ -46,7 +46,7 @@ RUN <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
 COPY Puppetfile /
 <% end %>
 
-COP <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
+COPY <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
 
 <% if hiera %>
 COPY hiera.yaml /
@@ -78,3 +78,5 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
 
 <% if entrypoint %>ENTRYPOINT ["<%= entrypoint.split(',').to_s %>"]<% end %>
 <% if cmd %>CMD <%= cmd.split(',').to_s %><% end %>
+
+<% if rocker %>TAG <%= image_name %><% end %>

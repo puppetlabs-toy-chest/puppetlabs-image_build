@@ -2,6 +2,7 @@ require 'puppet/face'
 require 'erb'
 require 'ostruct'
 require 'pty'
+require 'tempfile'
 
 
 class Dockerfile < OpenStruct
@@ -157,11 +158,12 @@ Puppet::Face.define(:docker, '0.1.0') do
 		default_to { true }
   end
 
+  option '--image-name STRING' do
+    summary 'The name of the resulting image'
+  end
+
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
-    option '--image-name STRING' do
-      summary 'The name of the resulting image'
-    end
     arguments '<manifest>'
     when_invoked do |manifest, args|
       fail "#{manifest} does not exist" unless File.file?(manifest)
@@ -177,7 +179,8 @@ Puppet::Face.define(:docker, '0.1.0') do
       file.close
 
 			build_tool = args[:rocker] ? 'rocker' : 'docker'
-      cmd = "#{build_tool} build -t #{args[:image_name]} -f #{file.path} ."
+      #cmd = "#{build_tool} build -t #{args[:image_name]} -f #{file.path} ."
+      cmd = "#{build_tool} build --id #{args[:image_name]} -f #{file.path} ."
 			begin
 				PTY.spawn(cmd) do |stdout, stdin, pid|
 					begin
