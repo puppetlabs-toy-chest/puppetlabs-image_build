@@ -74,7 +74,7 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
     <%= puppet_path %> inventory all > /inventory.json
 <% end %>
 
-<% if expose %>EXPOSE <%= expose.gsub(',', ' ') %><% end %>
+<% if expose %>EXPOSE <%= expose.to_s.gsub(',', ' ') %><% end %>
 
 <% if entrypoint %>ENTRYPOINT ["<%= entrypoint.split(',').to_s %>"]<% end %>
 <% if cmd %>CMD <%= cmd.split(',').to_s %><% end %>

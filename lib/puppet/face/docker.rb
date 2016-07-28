@@ -3,7 +3,19 @@ require 'erb'
 require 'ostruct'
 require 'pty'
 require 'tempfile'
+require 'yaml'
 
+class Object
+  def deep_symbolize_keys
+    return self.reduce({}) do |memo, (k, v)|
+      memo.tap { |m| m[k.to_sym] = v.deep_symbolize_keys }
+    end if self.is_a? Hash
+    return self.reduce([]) do |memo, v|
+      memo << v.deep_symbolize_keys; memo
+    end if self.is_a? Array
+    self
+  end
+end
 
 class Dockerfile < OpenStruct
   def render(template)
@@ -162,11 +174,23 @@ Puppet::Face.define(:docker, '0.1.0') do
     summary 'The name of the resulting image'
   end
 
+  option '--config-file STRING' do
+    summary 'A configuration file with all the metadata'
+    default_to { 'metadata.yaml' }
+  end
+
+
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
     arguments '<manifest>'
     when_invoked do |manifest, args|
       fail "#{manifest} does not exist" unless File.file?(manifest)
+
+      if File.file?(args[:config_file])
+        metadata = YAML.load_file(args[:config_file]).deep_symbolize_keys
+        args = metadata.merge(args)
+      end
+
       fail 'An image name must be provided with --image-name' unless args[:image_name]
 
       args = determine_os(args)
@@ -178,9 +202,11 @@ Puppet::Face.define(:docker, '0.1.0') do
       file.write(build_dockerfile(args))
       file.close
 
-			build_tool = args[:rocker] ? 'rocker' : 'docker'
-      #cmd = "#{build_tool} build -t #{args[:image_name]} -f #{file.path} ."
-      cmd = "#{build_tool} build --id #{args[:image_name]} -f #{file.path} ."
+			cmd = if args[:rocker]
+              "rocker build -f #{file.path} ."
+            else
+              "docker build -t #{args[:image_name]} -f #{file.path} ."
+            end
 			begin
 				PTY.spawn(cmd) do |stdout, stdin, pid|
 					begin

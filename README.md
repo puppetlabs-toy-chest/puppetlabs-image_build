@@ -29,6 +29,24 @@ following flag.
 
     puppet docker build manifests/init.pp --image-name puppet/sample --cmd nginx --expose 80 --rocker
 
+Rather than providing all the metadata on the command line you can also
+supply a `metadata.yaml` file with the keys:
+
+```yaml
+cmd: nginx
+expose: 80
+image_name: puppet/nginx
+```
+
+You can change the name and/or location of this file by using the
+`--config-file` option. By using the metadata file, and accepting the
+defaults, you can just run:
+
+    puppet docker build manifests/init.pp
+
+You can also override values in the metadata file with arguments on the
+command line.
+
 Note that using Rocker means that the Puppet tools are not left in the
 image, potentially drastically reducing it's size.
 
@@ -75,10 +93,10 @@ mod 'puppetlabs/dummy_service'
 ```
 
 Then lets write a simple manifest. Disabling nginx daemon mode isn't
-supported by the module yet so we drop a file in place.
+supported by the module yet so we drop a file in place. Have a look at
+`manifests/init.pp`:
 
-```
-$ cat manifests/init.pp
+```puppet
 Service {
   provider => dummy
 }
@@ -101,11 +119,20 @@ exec { 'Disable Nginx daemon mode':
 }
 ```
 
+And finally lets store the metadata in a file rather than pass on the
+command line. Take a look at `metadata.yaml`:
+
+```yaml
+cmd: nginx
+expose: 80
+image_name: puppet/nginx
+```
+
 Now lets build a Docker image. Note that you'll need docker available on
 your host to do so, along with the `docker_build` module installed.
 
 ```
-puppet docker build manifests/init.pp --image-name puppet/nginx --expose 80 --cmd nginx
+puppet docker build manifests/init.pp
 ```
 
 And finally lets run our new image. We expose the webserver on port 8080
@@ -147,6 +174,7 @@ USAGE: puppet docker build [--image STRING]
 [--image-name STRING]
 [--hiera]
 [--[no-]puppetfile]
+[--config-file STRING]
 <manifest>
 
 Discovery resources (including packages, services, users and groups)
@@ -157,6 +185,7 @@ OPTIONS:
   --debug                        - Whether to log debug information.
   --cmd STRING                   - The default command to be executed by the
                                    resulting image
+  --config-file STRING           - A configuration file with all the metadata
   --disable-inventory            - Enable advanced options and use Rocker as the
                                    build tool
   --entrypoint STRING            - The default entrypoint for the resulting
