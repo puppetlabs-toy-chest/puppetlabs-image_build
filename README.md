@@ -159,7 +159,7 @@ puppet docker build manifests/init.pp --image-name puppet/es --hiera --expose 92
 
 ```
 $ puppet docker build --help
-USAGE: puppet docker build [--image STRING]
+USAGE: puppet docker build [--from STRING]
 [--maintainer STRING]
 [--os STRING]
 [--os-version STRING]
@@ -193,7 +193,7 @@ OPTIONS:
   --expose STRING                - A list of ports to be exposed by the
                                    resulting image
   --hiera                        - Enable use of hiera during build
-  --image STRING                 - The base docker image to use for the
+  --from STRING                  - The base docker image to use for the
                                    resulting image
   --image-name STRING            - The name of the resulting image
   --labels KEY=VALUE             - A set of labels to be applied to the

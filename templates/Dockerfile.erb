@@ -1,4 +1,4 @@
-FROM <%= image %>
+FROM <%= from %>
 <% if maintainer %>MAINTAINER <%= maintainer %><% end %>
 
 ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %>
@@ -9,7 +9,7 @@ ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% 
 
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN apt-get update && \
-    apt-get install -y lsb-release wget<% if wget_version %>="$WGET_VERSION"-1ubuntu1<% end %> && \
+    apt-get install -y lsb-release wget && \
     wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb && \
     dpkg -i puppetlabs-release-pc1-"$CODENAME".deb && \
     rm puppetlabs-release-pc1-"$CODENAME".deb && \
