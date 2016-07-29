@@ -1,7 +1,7 @@
 Build Docker images from Puppet code.
 
-_This is currently a very hacky prototype. The code quality is terrible,
-nothing resemling tests can be found anywhere and if you try do anything
+_This is currently a somewhat hacky prototype. The code quality is poor
+only a few tests can be found anywhere and if you try do anything
 unexpected it will likely explode. If you make it past this statement
 then any and all feedback is much appreciated._
 
