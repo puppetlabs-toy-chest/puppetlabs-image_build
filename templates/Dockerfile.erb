@@ -1,12 +1,13 @@
 FROM <%= from %>
 <% if maintainer %>MAINTAINER <%= maintainer %><% end %>
 
-ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %>
+<% if environment %>ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %><% end %>
 
 <% if rocker %>MOUNT /opt/puppetlabs /etc/puppetlabs /root/.gem<% end %>
 
 <% if labels %>LABEL <%= labels.split(',').map { |g| g.split('=') }.map { |k,v| "#{k}=\"#{v}\"" }.join(' ') %><% end %>
 
+<% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN apt-get update && \
     apt-get install -y lsb-release wget && \
@@ -40,19 +41,23 @@ RUN apk add --update \
 # Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
 RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
 <% end %>
+<% end %>
 
 <% if use_puppetfile %>
 RUN <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
 COPY <%= puppetfile %> /Puppetfile
 <% end %>
 
+<% if manifest %>
 COPY <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
+<% end %>
 
 <% if use_hiera %>
 COPY <%= hiera_config %> /hiera.yaml
 COPY <%= hiera_data %> /hieradata
 <% end %>
 
+<% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN apt-get update && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %><%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> && \
@@ -66,6 +71,7 @@ RUN yum update -y && \
 RUN apk update && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %><%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> && \
     rm -rf /var/cache/apk/*
+<% end %>
 <% end %>
 
 <% unless disable_inventory %>
