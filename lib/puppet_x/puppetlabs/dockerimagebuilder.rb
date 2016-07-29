@@ -102,6 +102,8 @@ module PuppetX
           codename = case @context[:os_version]
                      when 'latest', 'jessie', /^8/
                        'jessie'
+                     when 'sid'
+                       'sid'
                      when 'wheezy', /^7/
                        'wheezy'
                      end
