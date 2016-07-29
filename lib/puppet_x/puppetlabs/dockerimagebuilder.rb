@@ -7,10 +7,10 @@ require 'puppet_x/puppetlabs/dockerfile'
 
 module PuppetX
   module Puppetlabs
-    class BuildError < Exception
+    class BuildError < RuntimeError
     end
 
-    class InvalidContextError < Exception
+    class InvalidContextError < RuntimeError
     end
 
     class DockerImageBuilder
@@ -84,7 +84,7 @@ module PuppetX
                                end
       end
 
-      def determine_environment_vars
+      def determine_environment_vars # rubocop:disable Metrics/AbcSize
         codename = nil
         puppet_version = nil
         facter_version = nil
