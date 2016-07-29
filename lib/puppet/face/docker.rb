@@ -79,6 +79,7 @@ Puppet::Face.define(:docker, '0.1.0') do
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
     arguments '<manifest>'
+    default
     when_invoked do |manifest, args|
       begin
         builder = PuppetX::Puppetlabs::DockerImageBuilder.new(manifest, args)
