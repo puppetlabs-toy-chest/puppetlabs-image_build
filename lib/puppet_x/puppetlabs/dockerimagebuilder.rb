@@ -22,6 +22,8 @@ module PuppetX
         add_manifest_to_context(manifest)
         determine_os
         determine_paths
+        determine_if_using_puppetfile
+        determine_if_using_hiera
         determine_environment_vars
         validate_context
       end
@@ -66,6 +68,18 @@ module PuppetX
             raise InvalidContextError, "the metadata file #{@context[:config_file]} does not appear to be valid YAML"
           end
           @context = metadata.merge(@context)
+        end
+      end
+
+      def determine_if_using_puppetfile
+        if File.file?(@context[:puppetfile])
+          @context[:use_puppetfile] = true
+        end
+      end
+
+      def determine_if_using_hiera
+        if File.file?(@context[:hiera_config]) && File.directory?(@context[:hiera_data])
+          @context[:use_hiera] = true
         end
       end
 

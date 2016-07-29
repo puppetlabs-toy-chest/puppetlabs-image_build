@@ -152,7 +152,7 @@ features demonstrated. In particular the use of Hiera to provide
 additional context for the Puppet build.
 
 ```
-puppet docker build manifests/init.pp --image-name puppet/es --hiera --expose 9200 --cmd /docker-entrypoint.sh
+puppet docker build manifests/init.pp --image-name puppet/es --expose 9200 --cmd /docker-entrypoint.sh
 ```
 
 ## Help
@@ -192,7 +192,8 @@ OPTIONS:
                                    image
   --expose STRING                - A list of ports to be exposed by the
                                    resulting image
-  --hiera                        - Enable use of hiera during build
+  --hiera-config STRING          - Hiera config file to use
+  --hiera-data STRING            - Hieradata directory to use
   --from STRING                  - The base docker image to use for the
                                    resulting image
   --image-name STRING            - The name of the resulting image
@@ -206,7 +207,7 @@ OPTIONS:
                                    the image if not autodetected
   --puppet-agent-version STRING  - Version of the Puppet Agent package to
                                    install
-  --[no-]puppetfile              - Enable use of Puppetfile to install
+  --puppetfile STRING            - Enable use of Puppetfile to install
                                    dependencies during build
   --r10k-version STRING          - Version of R10k to use for installing modules
                                    from Puppetfile

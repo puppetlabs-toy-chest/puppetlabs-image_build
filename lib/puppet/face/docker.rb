@@ -11,7 +11,7 @@ Puppet::Face.define(:docker, '0.1.0') do
   end
 
   option '--maintainer STRING' do
-    summary 'Name and email address for the resulting image'
+    summary 'Name and email address for the maintainer of the resulting image'
   end
 
   option '--os STRING' do
@@ -49,22 +49,27 @@ Puppet::Face.define(:docker, '0.1.0') do
   end
 
   option '--rocker' do
-    summary 'Enable advanced options and use Rocker as the build tool'
+    summary 'Use Rocker as the build tool'
   end
 
   option '--disable-inventory' do
-    summary 'Enable advanced options and use Rocker as the build tool'
+    summary 'Disable the generation of an inventory file at /inventory.json'
 		default_to { false }
   end
 
-  option '--hiera' do
-    summary 'Enable use of hiera during build'
-		default_to { false }
+  option '--hiera-config STRING' do
+    summary 'Hiera config file to use'
+    default_to { 'hiera.yaml' }
   end
 
-  option '--[no-]puppetfile' do
+  option '--hiera-data STRING' do
+    summary 'Hieradata directory to use'
+    default_to { 'hieradata' }
+  end
+
+  option '--puppetfile STRING' do
     summary 'Enable use of Puppetfile to install dependencies during build'
-		default_to { true }
+		default_to { 'Puppetfile' }
   end
 
   option '--image-name STRING' do
