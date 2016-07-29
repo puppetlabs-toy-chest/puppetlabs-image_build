@@ -1,5 +1,4 @@
 require 'pty'
-require 'tempfile'
 require 'yaml'
 
 require 'puppet_x/puppetlabs/deep_symbolize_keys'
@@ -29,15 +28,12 @@ module PuppetX
       end
 
       def dockerfile
-        basepath = File.dirname(File.dirname(File.dirname(File.dirname(__FILE__))))
-        template = File.join(basepath, 'templates', '/Dockerfile.erb')
-        dockerfile = PuppetX::Puppetlabs::Dockerfile.new(@context)
-        dockerfile.render(IO.read(template)).gsub(/\n\n+/, "\n\n");
+        PuppetX::Puppetlabs::Dockerfile.new(@context)
       end
 
       def build
         begin
-          PTY.spawn(build_command(temporary_dockerfile.path)) do |stdout, stdin, pid|
+          PTY.spawn(build_command(dockerfile)) do |stdout, stdin, pid|
             begin
               stdout.each { |line| print line }
             rescue Errno::EIO => e
@@ -150,19 +146,13 @@ module PuppetX
         }.reject { |name, value| value.nil? }
       end
 
-      def build_command(dockerfile_path)
+      def build_command(dockerfile)
+        dockerfile_path = dockerfile.save.path
         if @context[:rocker]
           "rocker build -f #{dockerfile_path} ."
         else
           "docker build -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
-      end
-
-      def temporary_dockerfile
-        file = Tempfile.new('Dockerfile', Dir.pwd)
-        file.write(dockerfile)
-        file.close
-        file
       end
     end
   end

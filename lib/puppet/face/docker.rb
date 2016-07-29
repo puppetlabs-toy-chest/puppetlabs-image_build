@@ -103,7 +103,7 @@ Puppet::Face.define(:docker, '0.1.0') do
     when_invoked do |manifest, args|
       begin
         builder = PuppetX::Puppetlabs::DockerImageBuilder.new(manifest, args)
-        builder.dockerfile
+        builder.dockerfile.render
       rescue PuppetX::Puppetlabs::InvalidContextError => e
         fail e.message
       end
