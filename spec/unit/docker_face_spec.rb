@@ -30,12 +30,22 @@ describe Puppet::Face[:docker, '0.1.0'] do
       it { is_expected.to respond_to subcommand }
       it { is_expected.to be_action subcommand }
 
-      it 'should fail if not passed a manifest' do
-        expect { subject.send(subcommand) }.to raise_exception(ArgumentError, /wrong number of arguments/)
+      it 'should fail if not passed a manifest because default manifest does not exist' do
+        expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_call_original
+        expect { subject.send(subcommand) }.to raise_exception(RuntimeError, /does not exist/)
       end
 
       it 'should fail if passed non existent manifest' do
+        expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('not-a-real-file', any_args).and_call_original
         expect { subject.send(subcommand, 'not-a-real-file') }.to raise_exception(RuntimeError, /does not exist/)
+      end
+
+      it 'should have a default value for manifest if not passed explicitly' do
+        image_builder = double()
+        allow(image_builder).to receive(:build)
+        allow(image_builder).to receive_message_chain(:dockerfile, :render)
+        expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_return(image_builder)
+        expect { subject.send(subcommand) }.not_to raise_error
       end
     end
   end

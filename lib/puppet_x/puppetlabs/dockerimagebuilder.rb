@@ -36,7 +36,7 @@ module PuppetX
           PTY.spawn(build_command) do |stdout, stdin, pid|
             begin
               stdout.each { |line| print line }
-            rescue Errno::EIO
+            rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
             end
           end
         rescue PTY::ChildExited => e

@@ -84,9 +84,11 @@ Puppet::Face.define(:docker, '0.1.0') do
 
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
-    arguments '<manifest>'
+    arguments '[<manifest>]'
     default
-    when_invoked do |manifest, args|
+    when_invoked do |*options|
+      args = options.pop
+      manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
         builder = PuppetX::Puppetlabs::DockerImageBuilder.new(manifest, args)
         builder.build
@@ -100,8 +102,10 @@ Puppet::Face.define(:docker, '0.1.0') do
 
   action(:dockerfile) do
     summary 'Discovery resources (including packages, services, users and groups)'
-    arguments '<manifest>'
-    when_invoked do |manifest, args|
+    arguments '[<manifest>]'
+    when_invoked do |*options|
+      args = options.pop
+      manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
         builder = PuppetX::Puppetlabs::DockerImageBuilder.new(manifest, args)
         builder.dockerfile.render
