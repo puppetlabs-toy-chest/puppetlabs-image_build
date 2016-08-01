@@ -1,4 +1,4 @@
-FROM <%= from %>
+<% if from %>FROM <%= from %><% end %>
 <% if maintainer %>MAINTAINER <%= maintainer %><% end %>
 
 <% if environment %>ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %><% end %>
@@ -74,7 +74,7 @@ RUN apk update && \
 <% end %>
 <% end %>
 
-<% unless disable_inventory %>
+<% if inventory %>
 LABEL com.puppet.inventory="/inventory.json"
 RUN <%= puppet_path %> module install puppetlabs-inventory && \
     <%= puppet_path %> inventory all > /inventory.json

@@ -33,7 +33,7 @@ module PuppetX
 
       def build
         begin
-          PTY.spawn(build_command(dockerfile)) do |stdout, stdin, pid|
+          PTY.spawn(build_command) do |stdout, stdin, pid|
             begin
               stdout.each { |line| print line }
             rescue Errno::EIO => e
@@ -57,30 +57,32 @@ module PuppetX
       end
 
       def load_from_config_file
-        if File.file?(@context[:config_file])
+        if @context[:config_file] && File.file?(@context[:config_file])
           begin
             metadata = YAML.load_file(@context[:config_file]).deep_symbolize_keys
           rescue Psych::SyntaxError
             raise InvalidContextError, "the metadata file #{@context[:config_file]} does not appear to be valid YAML"
           end
-          @context = metadata.merge(@context)
+          @context = metadata.merge(@context) if metadata.is_a?(Hash)
         end
       end
 
       def determine_if_using_puppetfile
-        if File.file?(@context[:puppetfile])
+        if exists_and_is_file(:puppetfile)
           @context[:use_puppetfile] = true
         end
       end
 
       def determine_if_using_hiera
-        if File.file?(@context[:hiera_config]) && File.directory?(@context[:hiera_data])
+        if exists_and_is_file(:hiera_config) && exists_and_is_directory(:hiera_data)
           @context[:use_hiera] = true
         end
       end
 
       def determine_os
-        @context[:os], @context[:os_version] = @context[:from].split(':') unless @context[:os]
+        if @context[:from]
+          @context[:os], @context[:os_version] = @context[:from].split(':') unless @context[:os]
+        end
       end
 
       def determine_paths
@@ -133,6 +135,8 @@ module PuppetX
                              '4.4.1'
                            when '1.4.0'
                              '4.4.0'
+                           else
+                             '4.5.2'
                            end
         else
           raise InvalidContextError, 'puppet docker currently only supports Ubuntu, Debian, Alpine and Centos base images'
@@ -146,13 +150,21 @@ module PuppetX
         }.reject { |name, value| value.nil? }
       end
 
-      def build_command(dockerfile)
+      def build_command
         dockerfile_path = dockerfile.save.path
         if @context[:rocker]
           "rocker build -f #{dockerfile_path} ."
         else
           "docker build -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
+      end
+
+      def exists_and_is_file(value)
+        @context[value] && File.file?(@context[value])
+      end
+
+      def exists_and_is_directory(value)
+        @context[value] && File.directory?(@context[value])
       end
     end
   end

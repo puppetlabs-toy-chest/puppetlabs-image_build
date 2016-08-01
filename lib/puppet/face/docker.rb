@@ -50,11 +50,12 @@ Puppet::Face.define(:docker, '0.1.0') do
 
   option '--rocker' do
     summary 'Use Rocker as the build tool'
+		default_to { false }
   end
 
-  option '--disable-inventory' do
-    summary 'Disable the generation of an inventory file at /inventory.json'
-		default_to { false }
+  option '--[no-]inventory' do
+    summary 'Enable or disable the generation of an inventory file at /inventory.json'
+		default_to { true }
   end
 
   option '--hiera-config STRING' do

@@ -9,11 +9,12 @@ describe Puppet::Face[:docker, '0.1.0'] do
   end
 
   it 'has a summary for the top level command' do
-    subject.summary.is_a?(String)
+    expect(subject.summary).to be_a(String)
   end
 
   {
-    disable_inventory: false,
+    inventory: true,
+    rocker: false,
     hiera_config: 'hiera.yaml',
     hiera_data: 'hieradata',
     puppetfile: 'Puppetfile',

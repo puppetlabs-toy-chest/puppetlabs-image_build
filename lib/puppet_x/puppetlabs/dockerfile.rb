@@ -13,7 +13,7 @@ module PuppetX
       end
 
       def render
-        ERB.new(IO.read(@template)).result(binding).gsub(/\n\n+/, "\n\n")
+        ERB.new(IO.read(@template)).result(binding).gsub(/\n\n+/, "\n\n").strip
       end
 
       def save
