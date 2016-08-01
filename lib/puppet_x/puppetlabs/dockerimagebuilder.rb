@@ -36,8 +36,7 @@ module PuppetX
           PTY.spawn(build_command) do |stdout, stdin, pid|
             begin
               stdout.each { |line| print line }
-            rescue Errno::EIO => e
-              raise BuildError, e.message
+            rescue Errno::EIO
             end
           end
         rescue PTY::ChildExited => e

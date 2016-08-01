@@ -1,0 +1,14 @@
+HOSTS:
+  ubuntu-1404-server:
+    roles:
+      - default
+    platform: ubuntu-1404-amd64
+    box: puppetlabs/ubuntu-14.04-64-nocm
+    box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-14.04-64-nocm
+    hypervisor: vagrant
+    vagrant_memsize: 2048
+
+CONFIG:
+  log_level: debug
+  type: foss
+  trace_limit: 200

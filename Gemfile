@@ -18,6 +18,7 @@ group :development do
   gem 'guard-rake'
   gem 'pry'
   gem 'yard'
+  gem 'listen', '<3.1'
 end
 
 group :acceptance do
