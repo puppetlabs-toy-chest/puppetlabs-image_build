@@ -19,6 +19,10 @@ RSpec.configure do |c|
     puppet_module_install(source: proj_root, module_name: module_name)
     hosts.each do |host|
       BeakerSpecHelper::spec_prep(host)
+      if fact_on(host, 'osfamily') == 'RedHat'
+        on(host, 'sudo yum update -y -q')
+        on(host, 'sudo systemctl stop firewalld')
+      end
 		  on host, puppet('module', 'install', 'garethr-docker'), { :acceptable_exit_codes => [0,1] }
     end
   end

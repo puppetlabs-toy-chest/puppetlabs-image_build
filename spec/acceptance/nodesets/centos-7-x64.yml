@@ -1,0 +1,14 @@
+HOSTS:
+  centos-7:
+    roles:
+      - default
+    platform: el-7-x86_64
+    box: puppetlabs/centos-7.0-64-nocm
+    box_url: https://vagrantcloud.com/puppetlabs/boxes/centos-7.0-64-nocm
+    hypervisor: vagrant
+    vagrant_memsize: 2048
+
+CONFIG:
+  log_level: debug
+  type: foss
+  trace_limit: 200

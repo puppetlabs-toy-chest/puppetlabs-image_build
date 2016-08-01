@@ -1,5 +1,5 @@
 HOSTS:
-  ubuntu-1404-server:
+  ubuntu-1404:
     roles:
       - default
     platform: ubuntu-1404-amd64
