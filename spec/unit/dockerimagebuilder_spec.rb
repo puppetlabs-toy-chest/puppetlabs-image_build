@@ -50,6 +50,164 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
     end
   end
 
+  context 'with a single label specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        labels: 'KEY=value',
+      }
+    end
+    it 'should expand the labels to an array' do
+      expect(context).to include(labels: ['KEY=value'])
+    end
+  end
+
+  context 'with multiple label specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        labels: 'KEY=value,KEY2=value2',
+      }
+    end
+    it 'should expand the labels to an array' do
+      expect(context[:labels]).to include('KEY=value', 'KEY2=value2')
+    end
+  end
+
+  context 'with multiple label specified in a config file' do
+    let(:configfile) do
+      file = Tempfile.new('hiera.yaml')
+      file.write <<-EOF
+---
+from: #{from}
+image_name: #{image_name}
+labels:
+  - KEY=value
+  - KEY2=value2
+      EOF
+      file.close
+      file
+    end
+    let(:args) { { config_file: configfile.path } }
+    it 'should expand the labels to an array' do
+      expect(context[:labels]).to include('KEY=value', 'KEY2=value2')
+    end
+  end
+
+  context 'with a single cmd specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        cmd: 'nginx',
+      }
+    end
+    it 'should expand the cmd to an array' do
+      expect(context).to include(cmd: ['nginx'])
+    end
+  end
+
+  context 'with multiple commands specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        cmd: 'nginx,run',
+      }
+    end
+    it 'should expand the labels to an array' do
+      expect(context[:cmd]).to include('nginx', 'run')
+    end
+  end
+
+  context 'with multiple commands specified in a config file' do
+    let(:configfile) do
+      file = Tempfile.new('metadata.yaml')
+      file.write <<-EOF
+---
+from: #{from}
+image_name: #{image_name}
+cmd:
+  - nginx
+  - run
+      EOF
+      file.close
+      file
+    end
+    let(:args) { { config_file: configfile.path } }
+    it 'should expand the commands to an array' do
+      expect(context[:cmd]).to include('nginx', 'run')
+    end
+  end
+
+  context 'with a single entrypoint specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        entrypoint: 'bash',
+      }
+    end
+    it 'should expand the entrypoint to an array' do
+      expect(context).to include(entrypoint: ['bash'])
+    end
+  end
+
+  context 'with multiple entrypoints specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        entrypoint: 'bash,-x',
+      }
+    end
+    it 'should expand the entrypoints to an array' do
+      expect(context[:entrypoint]).to include('bash', '-x')
+    end
+  end
+
+  context 'with multiple entrypoints specified in a config file' do
+    let(:configfile) do
+      file = Tempfile.new('metadata.yaml')
+      file.write <<-EOF
+---
+from: #{from}
+image_name: #{image_name}
+entrypoint:
+  - bash
+  - -x
+      EOF
+      file.close
+      file
+    end
+    let(:args) { { config_file: configfile.path } }
+    it 'should expand the entrypoints to an array' do
+      expect(context[:entrypoint]).to include('bash', '-x')
+    end
+  end
+
+
+  context 'with a Puppetfile provided' do
+    let(:puppetfile) { Tempfile.new('Puppetfile') }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        puppetfile: puppetfile.path,
+      }
+    end
+    it 'should not raise an error' do
+      expect { context }.not_to raise_error
+    end
+    it 'should produce a context which enables the puppetfile options' do
+      expect(context).to include(use_puppetfile: true)
+    end
+  end
+
+
+
   context 'with a Puppetfile provided' do
     let(:puppetfile) { Tempfile.new('Puppetfile') }
     let(:args) do
@@ -121,7 +279,7 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
 
   context 'with a config file used for providing input' do
     let(:configfile) do
-      file = Tempfile.new('hiera.yaml')
+      file = Tempfile.new('metadata.yaml')
       file.write <<-EOF
 ---
 from: #{from}
@@ -156,7 +314,7 @@ image_name: #{image_name}
 
   context 'with an invalid config file used for providing input' do
     let(:configfile) do
-      file = Tempfile.new('hiera.yaml')
+      file = Tempfile.new('metadata.yaml')
       file.write <<-EOF
 -
 invalid

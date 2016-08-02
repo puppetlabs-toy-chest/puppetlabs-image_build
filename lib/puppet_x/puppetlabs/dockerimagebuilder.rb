@@ -19,6 +19,9 @@ module PuppetX
         @context = args
         load_from_config_file
         add_manifest_to_context(manifest)
+        labels_to_array
+        cmd_to_array
+        entrypoint_to_array
         determine_os
         determine_paths
         determine_if_using_puppetfile
@@ -64,6 +67,22 @@ module PuppetX
           end
           @context = metadata.merge(@context) if metadata.is_a?(Hash)
         end
+      end
+
+      def labels_to_array
+        value_to_array(:labels)
+      end
+
+      def cmd_to_array
+        value_to_array(:cmd)
+      end
+
+      def entrypoint_to_array
+        value_to_array(:entrypoint)
+      end
+
+      def value_to_array(value)
+        @context[value] = @context[value].split(',') unless (@context[value].nil? || @context[value].is_a?(Array))
       end
 
       def determine_if_using_puppetfile
