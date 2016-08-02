@@ -21,6 +21,7 @@ module PuppetX
         add_manifest_to_context(manifest)
         labels_to_array
         cmd_to_array
+        expose_to_array
         entrypoint_to_array
         determine_os
         determine_paths
@@ -74,6 +75,10 @@ module PuppetX
         value_to_array(:labels)
       end
 
+      def expose_to_array
+        value_to_array(:expose)
+      end
+
       def cmd_to_array
         value_to_array(:cmd)
       end
@@ -83,7 +88,7 @@ module PuppetX
       end
 
       def value_to_array(value)
-        @context[value] = @context[value].split(',') unless (@context[value].nil? || @context[value].is_a?(Array))
+        @context[value] = @context[value].to_s.split(',') if (@context[value].is_a?(String) || @context[value].is_a?(Fixnum))
       end
 
       def determine_if_using_puppetfile

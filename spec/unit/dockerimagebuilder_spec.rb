@@ -78,7 +78,7 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
 
   context 'with multiple label specified in a config file' do
     let(:configfile) do
-      file = Tempfile.new('hiera.yaml')
+      file = Tempfile.new('metadata.yaml')
       file.write <<-EOF
 ---
 from: #{from}
@@ -95,6 +95,53 @@ labels:
       expect(context[:labels]).to include('KEY=value', 'KEY2=value2')
     end
   end
+
+  context 'with a single port specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        expose: 80,
+      }
+    end
+    it 'should expand the port to an array' do
+      expect(context).to include(expose: ['80'])
+    end
+  end
+
+  context 'with multiple ports specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        expose: '90,91',
+      }
+    end
+    it 'should expand the labels to an array' do
+      expect(context[:expose]).to include('90','91')
+    end
+  end
+
+  context 'with multiple label specified in a config file' do
+    let(:configfile) do
+      file = Tempfile.new('metadata.yaml')
+      file.write <<-EOF
+---
+from: #{from}
+image_name: #{image_name}
+expose:
+  - 92
+  - 93
+      EOF
+      file.close
+      file
+    end
+    let(:args) { { config_file: configfile.path } }
+    it 'should expand the ports to an array' do
+      expect(context[:expose]).to include(92,93)
+    end
+  end
+
 
   context 'with a single cmd specified' do
     let(:args) do
