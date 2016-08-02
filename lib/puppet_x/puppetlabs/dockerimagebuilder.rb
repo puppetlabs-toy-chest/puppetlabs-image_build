@@ -27,6 +27,7 @@ module PuppetX
         determine_if_using_puppetfile
         determine_if_using_hiera
         determine_environment_vars
+        determine_hostname
         validate_context
       end
 
@@ -166,6 +167,10 @@ module PuppetX
           puppet_version: puppet_version,
           facter_version: facter_version,
         }.reject { |name, value| value.nil? }
+      end
+
+      def determine_hostname
+        @context[:hostname] = @context[:image_name].split('/').pop
       end
 
       def build_command
