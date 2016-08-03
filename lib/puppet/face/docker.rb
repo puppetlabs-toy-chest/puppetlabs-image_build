@@ -82,6 +82,11 @@ Puppet::Face.define(:docker, '0.1.0') do
     default_to { 'metadata.yaml' }
   end
 
+  option '--config-directory STRING' do
+    summary 'A folder where metadata can be loaded from'
+    default_to { 'metadata' }
+  end
+
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
     arguments '[<manifest>]'

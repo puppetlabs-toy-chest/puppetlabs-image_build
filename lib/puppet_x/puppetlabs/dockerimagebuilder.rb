@@ -60,14 +60,41 @@ module PuppetX
         @context[:manifest] = manifest
       end
 
-      def load_from_config_file
-        if @context[:config_file] && File.file?(@context[:config_file])
+      def find_metadata_file(file)
+        if file.nil?
+          false
+        elsif File.file?(file)
+          file
+        elsif @context[:config_directory] && File.file?("#{@context[:config_directory]}/#{file}")
+          "#{@context[:config_directory]}/#{file}"
+        else
+          false
+        end
+      end
+
+      def host_config
+        hostname = @context[:image_name].to_s.split('/').pop
+        host_config = find_metadata_file("#{hostname}.yaml")
+        host_metadata = {}
+        if @context[:image_name] && host_config
           begin
-            metadata = YAML.load_file(@context[:config_file]).deep_symbolize_keys
+            host_metadata = YAML.load_file(host_config).deep_symbolize_keys
           rescue Psych::SyntaxError
-            raise InvalidContextError, "the metadata file #{@context[:config_file]} does not appear to be valid YAML"
+            raise InvalidContextError, "the metadata file #{host_config} does not appear to be valid YAML"
           end
-          @context = metadata.merge(@context) if metadata.is_a?(Hash)
+        end
+        host_metadata
+      end
+
+      def load_from_config_file
+        default_config = find_metadata_file(@context[:config_file])
+        if @context[:config_file] && default_config
+          begin
+            metadata = YAML.load_file(default_config).deep_symbolize_keys
+          rescue Psych::SyntaxError
+            raise InvalidContextError, "the metadata file #{default_config} does not appear to be valid YAML"
+          end
+          @context = metadata.merge(host_config).merge(@context) if metadata.is_a?(Hash)
         end
       end
 
@@ -175,7 +202,7 @@ module PuppetX
       end
 
       def determine_hostname
-        @context[:hostname] = @context[:image_name].split('/').pop
+        @context[:hostname] = @context[:image_name].split('/').pop if @context[:image_name]
       end
 
       def build_command

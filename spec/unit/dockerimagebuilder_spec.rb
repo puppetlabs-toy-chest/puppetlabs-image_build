@@ -142,7 +142,6 @@ expose:
     end
   end
 
-
   context 'with a single cmd specified' do
     let(:args) do
       {
@@ -253,8 +252,6 @@ entrypoint:
     end
   end
 
-
-
   context 'with a Puppetfile provided' do
     let(:puppetfile) { Tempfile.new('Puppetfile') }
     let(:args) do
@@ -356,6 +353,62 @@ image_name: #{image_name}
       it 'the image_name value to have been overriden' do
         expect(context).to include(image_name: new_image_name)
       end
+    end
+  end
+
+  context 'with a config file in a directory' do
+    let(:configdir) do
+      dir = Dir.mktmpdir('metadata')
+      file = File.new("#{dir}/metadata.yaml", "w")
+      file.write <<-EOF
+---
+from: #{from}
+image_name: #{image_name}
+      EOF
+      file.close
+      dir
+    end
+    let(:args) do
+      {
+        config_directory: configdir,
+        config_file: 'metadata.yaml'
+      }
+    end
+    it 'should determine the correct from value from the config file' do
+      expect(context).to include(from: from)
+    end
+  end
+
+  context 'with a host override config file in a directory' do
+    let(:configdir) do
+      dir = Dir.mktmpdir('metadata')
+      file = File.new("#{dir}/metadata.yaml", "w")
+      file.write <<-EOF
+---
+from: #{from}
+expose: 80
+      EOF
+      file.close
+      file = File.new("#{dir}/sample.yaml", "w")
+      file.write <<-EOF
+---
+expose: 90
+      EOF
+      file.close
+      dir
+    end
+    let(:args) do
+      {
+        config_directory: configdir,
+        config_file: 'metadata.yaml',
+        image_name: image_name,
+      }
+    end
+    it 'should determine the correct from value from the config file' do
+      expect(context).to include(from: from)
+    end
+    it 'should determine the correct port value from the host config file' do
+      expect(context).to include(expose: ['90'])
     end
   end
 
