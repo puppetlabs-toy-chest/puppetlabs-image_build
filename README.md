@@ -5,6 +5,25 @@ only a few tests can be found anywhere and if you try do anything
 unexpected it will likely explode. If you make it past this statement
 then any and all feedback is much appreciated._
 
+## Install
+
+`puppetlabs/docker_build` is a Puppet Module and once released will be
+available on the Forge. For now you'll need to copy it into the correct
+place on your filesystem, or alternatively use r10k or librarian-puppet
+to install it from git.
+
+The following should work in most cases:
+
+```
+git clone git@github.com:puppetlabs/puppetlabs-docker_build.git `puppet config print modulepath`/docker_build
+```
+
+You don't need any additional gems installed unless you are looking to
+work on the module. All you need is a working Docker environment, for
+which I'd recommend Docker for Mac of Docker for Windows or just Docker
+if you're on Linux.
+
+
 ## Usage
 
 With the module installed you should have access to a new puppet
