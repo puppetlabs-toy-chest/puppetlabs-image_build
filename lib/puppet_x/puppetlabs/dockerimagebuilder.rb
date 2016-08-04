@@ -1,5 +1,7 @@
 require 'pty'
 require 'yaml'
+require 'resolv'
+require 'date'
 
 require 'puppet_x/puppetlabs/deep_symbolize_keys'
 require 'puppet_x/puppetlabs/dockerfile'
@@ -15,7 +17,7 @@ module PuppetX
     class DockerImageBuilder
       attr_accessor :context
 
-      def initialize(manifest, args)
+      def initialize(manifest, args) # rubocop:disable Metrics/AbcSize
         @context = args
         load_from_config_file
         add_manifest_to_context(manifest)
@@ -29,6 +31,8 @@ module PuppetX
         determine_if_using_hiera
         determine_environment_vars
         determine_hostname
+        determine_master_host_and_port
+        determine_if_master_is_ip
         validate_context
       end
 
@@ -52,11 +56,13 @@ module PuppetX
       private
 
       def validate_context
+        unless @context[:master]
+          raise InvalidContextError, "specified file #{@context[:manifest]} does not exist" unless File.file?(@context[:manifest])
+        end
         raise InvalidContextError, 'You must provide an image name, either on the command line or in the metadata file' unless @context[:image_name]
       end
 
       def add_manifest_to_context(manifest)
-        raise InvalidContextError, "specified file #{manifest} does not exist" unless File.file?(manifest)
         @context[:manifest] = manifest
       end
 
@@ -70,6 +76,22 @@ module PuppetX
         else
           false
         end
+      end
+
+      def determine_master_host_and_port
+        if @context[:master]
+          parts = @context[:master].split(':')
+          if parts.length == 2
+            @context[:master_port] = parts[1]
+            @context[:master_host] = parts[0]
+          else
+            @context[:master_host] = @context[:master]
+          end
+        end
+      end
+
+      def determine_if_master_is_ip
+        @context[:master_is_ip] = @context[:master_host] =~ Resolv::IPv4::Regex ? true : false
       end
 
       def host_config

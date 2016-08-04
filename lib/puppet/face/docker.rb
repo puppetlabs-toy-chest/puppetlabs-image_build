@@ -87,6 +87,10 @@ Puppet::Face.define(:docker, '0.1.0') do
     default_to { 'metadata' }
   end
 
+  option '--master STRING' do
+    summary 'A Puppet Master to use for building images'
+  end
+
   action(:build) do
     summary 'Discovery resources (including packages, services, users and groups)'
     arguments '[<manifest>]'

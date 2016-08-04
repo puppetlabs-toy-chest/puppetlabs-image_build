@@ -1,11 +1,11 @@
 AllCops:
   Exclude:
-    # Ignore HTML related things
-    - '**/*.erb'
     # Ignore vendored gems
     - 'vendor/**/*'
     # Ignore code from test fixtures
     - 'spec/fixtures/**/*'
+    # Ignore modules and other code used in master example
+    - 'examples/master/**/*'
 
 Lint/ConditionPosition:
   Enabled: true

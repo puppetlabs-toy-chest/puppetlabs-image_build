@@ -177,8 +177,8 @@ puppet docker build manifests/init.pp --image-name puppet/es --expose 9200 --cmd
 ## Help
 
 ```
-$ puppet docker build --help
-USAGE: puppet docker build [--from STRING]
+$ puppet docker --help
+USAGE: puppet docker <action> [--from STRING]
 [--maintainer STRING]
 [--os STRING]
 [--os-version STRING]
@@ -189,14 +189,16 @@ USAGE: puppet docker build [--from STRING]
 [--entrypoint STRING]
 [--labels KEY=VALUE]
 [--rocker]
-[--disable-inventory]
+[--[no-]inventory]
+[--hiera-config STRING]
+[--hiera-data STRING]
+[--puppetfile STRING]
 [--image-name STRING]
-[--hiera]
-[--[no-]puppetfile]
 [--config-file STRING]
-<manifest>
+[--config-directory STRING]
+[--master STRING]
 
-Discovery resources (including packages, services, users and groups)
+Build Docker images and Dockerfiles using Puppet code
 
 OPTIONS:
   --render-as FORMAT             - The rendering format to use.
@@ -204,22 +206,24 @@ OPTIONS:
   --debug                        - Whether to log debug information.
   --cmd STRING                   - The default command to be executed by the
                                    resulting image
+  --config-directory STRING      - A folder where metadata can be loaded from
   --config-file STRING           - A configuration file with all the metadata
-  --disable-inventory            - Enable advanced options and use Rocker as the
-                                   build tool
   --entrypoint STRING            - The default entrypoint for the resulting
                                    image
   --expose STRING                - A list of ports to be exposed by the
                                    resulting image
-  --hiera-config STRING          - Hiera config file to use
-  --hiera-data STRING            - Hieradata directory to use
   --from STRING                  - The base docker image to use for the
                                    resulting image
+  --hiera-config STRING          - Hiera config file to use
+  --hiera-data STRING            - Hieradata directory to use
   --image-name STRING            - The name of the resulting image
+  --[no-]inventory               - Enable or disable the generation of an
+                                   inventory file at /inventory.json
   --labels KEY=VALUE             - A set of labels to be applied to the
                                    resulting image
-  --maintainer STRING            - Name and email address for the resulting
-                                   image
+  --maintainer STRING            - Name and email address for the maintainer of
+                                   the resulting image
+  --master STRING                - A Puppet Master to use for building images
   --os STRING                    - The operating system used by the image if not
                                    autodetected
   --os-version STRING            - The version of the operating system used by
@@ -230,8 +234,13 @@ OPTIONS:
                                    dependencies during build
   --r10k-version STRING          - Version of R10k to use for installing modules
                                    from Puppetfile
-  --rocker                       - Enable advanced options and use Rocker as the
-                                   build tool
+  --rocker                       - Use Rocker as the build tool
+
+ACTIONS:
+  build         Discovery resources (including packages, services, users and
+                groups)
+  dockerfile    Discovery resources (including packages, services, users and
+                groups)
 
 See 'puppet man docker' or 'man puppet-docker' for full help.
 ```

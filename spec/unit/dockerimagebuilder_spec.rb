@@ -63,6 +63,62 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
     end
   end
 
+  context 'with a master specified' do
+    let(:master) { 'puppet.example.com' }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        master: master,
+      }
+    end
+    it 'should set master host' do
+      expect(context).to include(master_host: master)
+    end
+    it 'should not think master is an IP address' do
+      expect(context).to include(master_is_ip: false)
+    end
+  end
+
+  context 'with a master and port specified' do
+    let(:port) { '9090' }
+    let(:master) { 'puppet.example.com' }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        master: "#{master}:#{port}",
+      }
+    end
+    it 'should set master host' do
+      expect(context).to include(master_host: master)
+    end
+    it 'should set master port' do
+      expect(context).to include(master_port: port)
+    end
+  end
+
+  context 'with a master specified as an IP address' do
+    let(:master) { '192.168.0.9' }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        master: master,
+      }
+    end
+    it 'should set master host' do
+      expect(context).to include(master_host: master)
+    end
+    it 'should regonise master is an IP address' do
+      expect(context).to include(master_is_ip: true)
+    end
+  end
+
+
+
+
+
   context 'with multiple label specified' do
     let(:args) do
       {

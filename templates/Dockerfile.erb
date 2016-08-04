@@ -43,35 +43,52 @@ RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockde
 <% end %>
 <% end %>
 
-<% if use_puppetfile %>
+<% if use_puppetfile && !master %>
 RUN <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
 COPY <%= puppetfile %> /Puppetfile
 <% end %>
 
-<% if manifest %>
+<% if manifest && !master %>
 COPY <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
 <% end %>
 
-<% if use_hiera %>
+<% if use_hiera && !master %>
 COPY <%= hiera_config %> /hiera.yaml
 COPY <%= hiera_data %> /hieradata
 <% end %>
 
 <% if os %>
-<% if os == 'ubuntu' or os == 'debian' %>
+  <% if master %>
+    <% if os == 'ubuntu' or os == 'debian' %>
+RUN apt-get update && \
+    <% if master_is_ip %>echo <%= master_host %> puppet >> /etc/hosts && <% end %>FACTER_hostname=<%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.dockerbuilder <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    <% elsif os == 'centos' %>
+RUN yum update -y && \
+    <% if master_is_ip %>echo <%= master_host %> puppet >> /etc/hosts && <% end %>FACTER_hostname=<%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.dockerbuilder <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize && \
+    yum clean all
+    <% elsif os == 'alpine' %>
+RUN apk update && \
+    <% if master_is_ip %>echo <%= master_host %> puppet >> /etc/hosts && <% end %>FACTER_hostname=<%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.dockerbuilder <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize && \
+    rm -rf /var/cache/apk/*
+    <% end %>
+  <% else %>
+    <% if os == 'ubuntu' or os == 'debian' %>
 RUN apt-get update && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %> FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-<% elsif os == 'centos' %>
+    <% elsif os == 'centos' %>
 RUN yum update -y && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %> FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>&& \
     yum clean all
-<% elsif os == 'alpine' %>
+    <% elsif os == 'alpine' %>
 RUN apk update && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %> FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> && \
     rm -rf /var/cache/apk/*
-<% end %>
+    <% end %>
+  <% end %>
 <% end %>
 
 <% if inventory %>

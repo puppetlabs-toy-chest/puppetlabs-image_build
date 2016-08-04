@@ -19,6 +19,7 @@ group :development do
   gem 'pry'
   gem 'yard'
   gem 'listen', '<3.1'
+  gem 'r10k'
 end
 
 group :acceptance do

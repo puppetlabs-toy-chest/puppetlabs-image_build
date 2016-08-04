@@ -35,6 +35,8 @@ describe Puppet::Face[:docker, '0.1.0'] do
         expect { subject.send(subcommand) }.to raise_exception(RuntimeError, /does not exist/)
       end
 
+      
+
       it 'should fail if passed non existent manifest' do
         expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('not-a-real-file', any_args).and_call_original
         expect { subject.send(subcommand, 'not-a-real-file') }.to raise_exception(RuntimeError, /does not exist/)
@@ -57,6 +59,12 @@ describe Puppet::Face[:docker, '0.1.0'] do
       expect { subject.build(manifest.path, {image_name: 'sample'}) }.to raise_exception(RuntimeError, /the build process was interupted/)
     end
 
+    it 'should not fail if passed a master even when default manifest does not exist' do
+      expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_call_original
+      expect_any_instance_of(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:build)
+      expect { subject.build({master: 'puppet', image_name: 'sample'}) }.not_to raise_error
+    end
+
     it 'should run with the minimum options' do
       expect_any_instance_of(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:build)
       expect { subject.build(manifest.path, {image_name: 'sample'}) }.not_to raise_error
@@ -68,6 +76,11 @@ describe Puppet::Face[:docker, '0.1.0'] do
     it 'should run with the minimum options' do
       expect_any_instance_of(PuppetX::Puppetlabs::Dockerfile).to receive(:render)
       expect { subject.dockerfile(manifest.path, {image_name: 'sample'}) }.not_to raise_error
+    end
+    it 'should not fail if passed a master even when default manifest does not exist' do
+      expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_call_original
+      expect_any_instance_of(PuppetX::Puppetlabs::Dockerfile).to receive(:render)
+      expect { subject.dockerfile({master: 'puppet', image_name: 'sample'}) }.not_to raise_error
     end
   end
 end
