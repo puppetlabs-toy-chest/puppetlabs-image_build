@@ -1,15 +1,55 @@
-Build Docker images from Puppet code.
+# docker_build
 
-_This is currently a somewhat hacky prototype. The code quality is poor
-only a few tests can be found anywhere and if you try do anything
-unexpected it will likely explode. If you make it past this statement
-then any and all feedback is much appreciated._
+[Module description]: #module-description
+[Setup]: #setup
+[Usage]: #usage
+[Reference]: #reference
+[A hello world example]: #a-hello-world-example---nginx
+[Involving hiera]: #involving-hiera---elasticsearch
+[Building multiple images from one manifest]: #building-multiple-images-from-one-manifest
+[Using a Puppet Master]: #using-a-puppet-master
+[Minimizing image size with Rocker]: #minimizing-image-size-with-rocker
+[Limitations]: #limitations
+[Maintainers]: #maintainers
 
-## Install
+#### Table of Contents
+
+1. [Module description - What is the docker_build module, and what does it
+   do?][Module description]
+2. [Setup - The basics of getting started with docker_build][Setup]
+3. [Usage - How to build Docker containers with Puppet][Usage]
+    - [A hello world example][A hello world example]
+    - [Involving hiera][Involving hiera]
+    - [Building multiple images from one manifest][Building multiple images from one manifest]
+    - [Using a Puppet Master][using a Puppet Master]
+    - [Minimizing image size with Rocker][Minimizing image size with Rocker]
+4. [Reference - Sample help output from the tool][Reference]
+5. [Limitations - OS compatibility, etc.][Limitations]
+6. [Maintainers - who maintains this project][Maintainers]
+
+
+## Module description
+
+The basic purpose of `docker_build` is to enable building Docker images
+from Puppet code. Their are two main cases where this can be useful:
+
+1. You have an existing Puppet codebase and you're moving some of your
+   services to using containers. By sharing the same code between
+   container and non-container based infrastructure you can cut down on
+   duplication of effort, and take advantage of work you've already
+   done.
+2. You're building a lot of images, but scaling Dockerfile means either
+   a complex hierachy of images or copy-and-pasting snippets between
+   many individual Dockerfiles. `docker_build` allows for sharing common
+   functionality as Puppet modules, and Puppet itself provides a rish
+   domain-specific language for declarative composition of images.
+
+
+## Setup
 
 `puppetlabs/docker_build` is a Puppet Module and once released will be
 available on the Forge. For now you'll need to copy it into the correct
-place on your filesystem, or alternatively use r10k or librarian-puppet
+place on your filesystem, or alternatively use `r10k` or `librarian-puppet`
 to install it from git.
 
 The following should work in most cases:
@@ -20,7 +60,7 @@ git clone git@github.com:puppetlabs/puppetlabs-docker_build.git `puppet config p
 
 You don't need any additional gems installed unless you are looking to
 work on the module. All you need is a working Docker environment, for
-which I'd recommend Docker for Mac of Docker for Windows or just Docker
+which I'd recommend Docker for Mac or Docker for Windows or just Docker
 if you're on Linux.
 
 
@@ -31,46 +71,21 @@ command, `puppet docker`. This has two subcommands, one will trigger a
 build of an image, the other can be used to output the intermediary
 dockerfile.
 
-The example directory contains a simple example for experimenting with.
-Simply enter that directory and run:
+The examples directory contains a set of examples for experimenting with.
+Simply open up `examples/nginx` and run:
 
-    puppet docker build manifests/init.pp --image-name puppet/sample
+    puppet docker build
 
-The above is the simplest example of a build. But the resulting image
-won't have a default command, nor will it expose the correct ports for
-the nginx example. We can fix that with a few extra arguments.
+The above is the simplest example of a build. Some settings are provided
+in the accompanying `metadata.yaml` file, while others are defaults
+specific to the tool. You can change values in the metadata file (useful
+for version control) or you can override those values on the command
+line.
 
-    puppet docker build manifests/init.pp --image-name puppet/sample --cmd nginx --expose 80
+    puppet docker build --image-name puppet/sample --cmd nginx --expose 80
 
-If you would rather use the
-[Rocker](https://github.com/grammarly/rocker) build tool you can do so with the
-following flag.
-
-    puppet docker build manifests/init.pp --image-name puppet/sample --cmd nginx --expose 80 --rocker
-
-Rather than providing all the metadata on the command line you can also
-supply a `metadata.yaml` file with the keys:
-
-```yaml
-cmd: nginx
-expose: 80
-image_name: puppet/nginx
-```
-
-You can change the name and/or location of this file by using the
-`--config-file` option. By using the metadata file, and accepting the
-defaults, you can just run:
-
-    puppet docker build manifests/init.pp
-
-You can also override values in the metadata file with arguments on the
-command line.
-
-Note that using Rocker means that the Puppet tools are not left in the
-image, potentially drastically reducing it's size.
-
-See the full help for other arguments for specificing a different
-base image, setting a maintainer, using Rocker instead of Docker for the
+See the full help page for other arguments for specificing different
+base images, setting a maintainer, using Rocker instead of Docker for the
 build and much more.
 
     puppet docker build --help
@@ -79,17 +94,10 @@ You can also output the intermediary dockerfile using another
 subcommand. This is useful for both debugging and if you want to do
 something not natively supported by the tool.
 
-    puppet docker dockerfile manifests/init.pp
+    puppet docker dockerfile
 
 
-## Examples
-
-The module includes a few examples to help get you started. See the
-examples directory for the accompanying code. Here's a simple hello
-world example.
-
-
-### Nginx
+### A hello world example - Nginx
 
 Lets see a simple hello world example. We'll create a Docker image
 running Nginx and serving a simple text file.
@@ -116,9 +124,7 @@ supported by the module yet so we drop a file in place. Have a look at
 `manifests/init.pp`:
 
 ```puppet
-Service {
-  provider => dummy
-}
+include 'dummy_service'
 
 class { 'nginx': }
 
@@ -151,7 +157,7 @@ Now lets build a Docker image. Note that you'll need docker available on
 your host to do so, along with the `docker_build` module installed.
 
 ```
-puppet docker build manifests/init.pp
+puppet docker build
 ```
 
 And finally lets run our new image. We expose the webserver on port 8080
@@ -164,17 +170,118 @@ $ curl http://0.0.0.0:8080
 Hello Puppet and Docker%
 ```
 
-### Elasticsearch
+### Involving hiera - Elasticsearch
 
 The Elasticsearch example is similar to the above, with a few additional
 features demonstrated. In particular the use of Hiera to provide
-additional context for the Puppet build.
+additional context for the Puppet build. You can find this in the
+`examples/elasticsearch` directory.
 
 ```
 puppet docker build manifests/init.pp --image-name puppet/es --expose 9200 --cmd /docker-entrypoint.sh
 ```
 
-## Help
+### Building multiple images from one manifest
+
+One advantage of using Puppet for building Docker images is you are
+removed from the need to have a single Dockerfile per image. Meaning a
+single repository of Puppet code can be used to describe multiple
+images. This makes ensuring all images use (for example) the same
+repositories or same hardening scripts much easier to enforce. Change
+code in one place and rebuild multiple images.
+
+Describing multiple images in Puppet is done using the existing `node`
+resource in your manifest. For instance:
+
+```puppet
+node 'node1' {
+  webserver { 'hello node 1': }
+}
+
+node 'node2' {
+  webserver { 'hello node 2': }
+}
+```
+
+You can then select which image to build when running the build command,
+by explicitly passing the `image-name`.
+
+    puppet docker build --image-name puppet/node1
+
+The match for the node resource in the Puppet code is done without the
+repository name, in this case the `puppet/` before `node1`.
+
+Note that you may want different metadata for different images.
+`docker_build` will attempt to detect additional metadata in the
+`metadata` folder, and will merge items from `metadata/metadata.yaml`
+with node specific metadata, for instance from `metadata/node1.yaml`
+
+You can see an example of this settup in the `examples/multi` directory.
+
+
+### Using a Puppet Master
+
+The above examples all use local manifests copied to the image during
+build, but `docker_build` also supports using a Puppet Master. You can
+provide metadata via a local metadata file or directory, or by passing
+command line arguments to the build command as shown in the examples
+above. The only change is passing `--master` like so.
+
+    puppet docker dockerfile --master puppet.example.com --image-name puppet/node1 --expose 80 --cmd nginx
+
+The hostname passed to the Puppet Master will take the form
+node1.{datetime}.dockerbuilder. This means you can match on that pattern
+in your manifests, for instance like so:
+
+```puppet
+node /^node1/ {
+  webserver { 'hello node 1': }
+}
+```
+
+A worked example is provided in the `examples/master` folder. You can
+either upload this to an existing Puppet Master or Puppet Enterprise
+install, or run a new local master using Docker.
+
+First install the dependent modules into the local environment:
+
+    r10k puppetfile install --moduledir code/environments/production/modules
+
+Then, from the `examples/master` folder, use Docker to run an instance
+of Puppet Server:
+
+    docker run --name puppet -P --hostname puppet -v $(pwd)/code:/etc/puppetlabs/code puppet/puppetserver-standalone
+
+Determine the port on which the Puppet Server is exposed locally:
+
+    docker port puppet
+
+You'll also need the IP address of your local machine. Replace the {ip}
+and {port} in the following with your own values.
+
+    puppet docker dockerfile --master {ip}:{port} --image-name puppet/node1 --expose 80 --cmd nginx
+
+This should use the code on the Puppet Master to build the image.
+
+Note that this currently assumes the requested certificate is autosigned
+in some way, expect more guidance on that in the future.
+
+
+### Minimizing image size with Rocker
+
+`docker_build` supports using the
+[Rocker](https://github.com/grammarly/rocker) build tool in place of the
+standard Docker build command. The Rocker output provides a little more
+detail about the build process, but also allows for mounting of folders
+at build time which minimizes the size of the resulting image.
+
+    puppet docker build --rocker
+
+Note that when using Rocker the Puppet tools are not left in the final
+image, reducing it's file size.
+
+
+## Reference
 
 ```
 $ puppet docker --help
@@ -244,6 +351,8 @@ ACTIONS:
 
 See 'puppet man docker' or 'man puppet-docker' for full help.
 ```
+
+## Limitations
 
 ## Maintainers
 
