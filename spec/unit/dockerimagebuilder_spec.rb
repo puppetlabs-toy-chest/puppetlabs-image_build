@@ -50,6 +50,22 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
     end
   end
 
+  context 'with a single env value specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        env: 'KEY=value',
+      }
+    end
+    it 'should expand the env to an array' do
+      expect(context).to include(env: ['KEY=value'])
+    end
+    it 'should add the env to the environment used by the image' do
+      expect(context[:environment]).to include('KEY' => 'value')
+    end
+  end
+
   context 'with a single label specified' do
     let(:args) do
       {
@@ -114,10 +130,6 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
       expect(context).to include(master_is_ip: true)
     end
   end
-
-
-
-
 
   context 'with multiple label specified' do
     let(:args) do

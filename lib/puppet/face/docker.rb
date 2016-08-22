@@ -48,6 +48,10 @@ Puppet::Face.define(:docker, '0.1.0') do
     summary 'A set of labels to be applied to the resulting image'
   end
 
+  option '--env KEY=VALUE' do
+    summary 'A set of additional environment variables to be set in the resulting image'
+  end
+
   option '--rocker' do
     summary 'Use Rocker as the build tool'
 		default_to { false }

@@ -35,8 +35,6 @@ describe Puppet::Face[:docker, '0.1.0'] do
         expect { subject.send(subcommand) }.to raise_exception(RuntimeError, /does not exist/)
       end
 
-      
-
       it 'should fail if passed non existent manifest' do
         expect(PuppetX::Puppetlabs::DockerImageBuilder).to receive(:new).with('not-a-real-file', any_args).and_call_original
         expect { subject.send(subcommand, 'not-a-real-file') }.to raise_exception(RuntimeError, /does not exist/)

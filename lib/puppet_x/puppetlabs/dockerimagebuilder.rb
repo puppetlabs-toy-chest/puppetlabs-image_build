@@ -22,6 +22,7 @@ module PuppetX
         load_from_config_file
         add_manifest_to_context(manifest)
         labels_to_array
+        env_to_array
         cmd_to_array
         expose_to_array
         entrypoint_to_array
@@ -124,6 +125,10 @@ module PuppetX
         value_to_array(:labels)
       end
 
+      def env_to_array
+        value_to_array(:env)
+      end
+
       def expose_to_array
         value_to_array(:expose)
       end
@@ -169,7 +174,7 @@ module PuppetX
                                end
       end
 
-      def determine_environment_vars # rubocop:disable Metrics/AbcSize
+      def determine_environment_vars # rubocop:disable Metrics/AbcSize,Metrics/PerceivedComplexity
         codename = nil
         puppet_version = nil
         facter_version = nil
@@ -221,6 +226,9 @@ module PuppetX
           puppet_version: puppet_version,
           facter_version: facter_version,
         }.reject { |name, value| value.nil? }
+        @context[:env].map { |pair| pair.split('=') }.each do |name, value|
+          @context[:environment][name] = value
+        end unless @context[:env].nil?
       end
 
       def determine_hostname
