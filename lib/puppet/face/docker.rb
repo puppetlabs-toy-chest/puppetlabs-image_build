@@ -40,10 +40,6 @@ Puppet::Face.define(:docker, '0.1.0') do
     summary 'The default command to be executed by the resulting image'
   end
 
-  option '--autosign-token STRING' do
-    summary 'An authentication token used for autosigning master-built images'
-  end
-
   option '--entrypoint STRING' do
     summary 'The default entrypoint for the resulting image'
   end
@@ -103,6 +99,34 @@ Puppet::Face.define(:docker, '0.1.0') do
     summary 'Discovery resources (including packages, services, users and groups)'
     arguments '[<manifest>]'
     default
+
+    [
+      'cgroup-parent STRING',
+      'cpu-period INT',
+      'cpu-quota   INT',
+      'cpu-shares INT',
+      'cpuset-cpus STRING',
+      'cpuset-mems STRING',
+      'disable-content-trust',
+      'force-rm',
+      'isolation STRING',
+      'memory-limit STRING',
+      'memory-swap STRING',
+      'no-cache',
+      'pull',
+      'quiet',
+      'shm-size STRING',
+      'ulimit STRING'
+    ].each do |value|
+      option "--#{value}" do
+        summary "#{value.split.first} argument passed to underlying build tool"
+      end
+    end
+
+    option '--autosign-token STRING' do
+      summary 'An authentication token used for autosigning master-built images'
+    end
+
     when_invoked do |*options|
       args = options.pop
       manifest = options.empty? ? 'manifests/init.pp' : options.first

@@ -235,12 +235,39 @@ module PuppetX
         @context[:hostname] = @context[:image_name].split('/').pop if @context[:image_name]
       end
 
+      def build_args
+        [
+          'cgroup-parent',
+          'cpu-period',
+          'cpu-quota',
+          'cpu-shares',
+          'cpuset-cpus',
+          'cpuset-mems',
+          'isolation',
+          'memory-limit',
+          'memory-swap',
+          'shm-size',
+          'ulimit',
+          'disable-content-trust',
+          'force-rm',
+          'no-cache',
+          'pull',
+          'quiet',
+        ].reject { |arg| @context[arg.to_sym].nil? }
+      end
+
+      def string_args
+        build_args.collect do |arg|
+          @context[arg.to_sym] == true ? "--#{arg}" : "--#{arg}=#{@context[arg.to_sym]}"
+        end.join(' ')
+      end
+
       def build_command
         dockerfile_path = dockerfile.save.path
         if @context[:rocker]
-          "rocker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} -f #{dockerfile_path} ."
+          "rocker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} #{string_args} -f #{dockerfile_path} ."
         else
-          "docker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} -t #{@context[:image_name]} -f #{dockerfile_path} ."
+          "docker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
       end
 

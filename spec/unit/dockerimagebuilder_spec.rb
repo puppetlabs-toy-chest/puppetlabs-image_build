@@ -416,6 +416,55 @@ entrypoint:
     end
   end
 
+  [
+    'cgroup-parent',
+    'cpu-period',
+    'cpu-quota',
+    'cpu-shares',
+    'cpuset-cpus',
+    'cpuset-mems',
+    'isolation',
+    'memory-limit',
+    'memory-swap',
+    'shm-size',
+    'ulimit'
+  ].each do |argument|
+    context "when passing --#{argument}" do
+      let(:value) { 'abcd' }
+      let(:args) do
+        Hash[
+          :from, from,
+          :image_name, image_name,
+          argument.to_sym, value,
+        ]
+      end
+      it "should pass #{argument} to the underlying build tool" do
+        expect(builder.send(:build_command)).to include("--#{argument}=#{value}")
+      end
+    end
+  end
+
+  [
+    'disable-content-trust',
+    'force-rm',
+    'no-cache',
+    'pull',
+    'quiet',
+  ].each do |argument|
+    context "when passing --#{argument}" do
+      let(:args) do
+        Hash[
+          :from, from,
+          :image_name, image_name,
+          argument.to_sym, true,
+        ]
+      end
+      it "should pass #{argument} to the underlying build tool" do
+        expect(builder.send(:build_command)).to include("--#{argument}")
+      end
+    end
+  end
+
   context 'with a config file used for providing input' do
     let(:configfile) do
       file = Tempfile.new('metadata.yaml')
