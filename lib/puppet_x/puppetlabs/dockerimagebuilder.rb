@@ -238,9 +238,9 @@ module PuppetX
       def build_command
         dockerfile_path = dockerfile.save.path
         if @context[:rocker]
-          "rocker build -f #{dockerfile_path} ."
+          "rocker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} -f #{dockerfile_path} ."
         else
-          "docker build -t #{@context[:image_name]} -f #{dockerfile_path} ."
+          "docker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
       end
 

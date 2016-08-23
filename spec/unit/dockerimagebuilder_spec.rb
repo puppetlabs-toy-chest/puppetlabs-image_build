@@ -389,6 +389,33 @@ entrypoint:
     end
   end
 
+  context 'with an autosign token specified' do
+    let(:token) { '12345abcde' }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        autosign_token: token,
+      }
+    end
+    it 'should pass the token as a build argument' do
+      expect(builder.send(:build_command)).to include("--build-arg AUTOSIGN_TOKEN=#{token}")
+    end
+    context 'using the rocker build tool' do
+      let(:args) do
+        {
+          from: from,
+          image_name: image_name,
+          autosign_token: token,
+          rocker: true,
+        }
+      end
+      it 'should pass the token as a build argument' do
+        expect(builder.send(:build_command)).to include("--build-arg AUTOSIGN_TOKEN=#{token}")
+      end
+    end
+  end
+
   context 'with a config file used for providing input' do
     let(:configfile) do
       file = Tempfile.new('metadata.yaml')

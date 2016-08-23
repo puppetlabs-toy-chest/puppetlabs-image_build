@@ -40,6 +40,10 @@ Puppet::Face.define(:docker, '0.1.0') do
     summary 'The default command to be executed by the resulting image'
   end
 
+  option '--autosign-token STRING' do
+    summary 'An authentication token used for autosigning master-built images'
+  end
+
   option '--entrypoint STRING' do
     summary 'The default entrypoint for the resulting image'
   end
