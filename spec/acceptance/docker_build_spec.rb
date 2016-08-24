@@ -24,6 +24,9 @@ describe 'docker_build' do
     it 'should successfully run docker build' do
       expect(@exit_status).to eq 0
     end
+    it 'should result in a base image being pulled' do
+      expect(docker_image('ubuntu:16.04')).to exist
+    end
     it 'should result in an image being created' do
       expect(docker_image('puppet/nginx')).to exist
     end

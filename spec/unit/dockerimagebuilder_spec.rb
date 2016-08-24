@@ -42,6 +42,9 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
         expect(context[:environment]).to include(codename: 'jessie')
       end
     end
+    it 'should not pass an autosign token build argument' do
+      expect(builder.send(:build_command)).not_to include("--build-arg AUTOSIGN_TOKEN=")
+    end
     it '#dockerfile should return a Dockerfile object' do
       expect(builder.dockerfile).to be_a(PuppetX::Puppetlabs::Dockerfile)
     end

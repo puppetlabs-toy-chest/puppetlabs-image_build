@@ -262,12 +262,14 @@ module PuppetX
         end.join(' ')
       end
 
+
       def build_command
         dockerfile_path = dockerfile.save.path
+        autosign_string = @context[:autosign_token].nil? ? '' : "--build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]}"
         if @context[:rocker]
-          "rocker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} #{string_args} -f #{dockerfile_path} ."
+          "rocker build #{autosign_string} #{string_args} -f #{dockerfile_path} ."
         else
-          "docker build --build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
+          "docker build #{autosign_string} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
       end
 
