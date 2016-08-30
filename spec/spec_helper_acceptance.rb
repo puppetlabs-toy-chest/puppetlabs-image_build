@@ -24,6 +24,7 @@ RSpec.configure do |c|
         on(host, 'sudo systemctl stop firewalld')
       end
 		  on host, puppet('module', 'install', 'garethr-docker'), { :acceptable_exit_codes => [0,1] }
+		  on host, puppet('module', 'install', 'puppetlabs-rkt'), { :acceptable_exit_codes => [0,1] }
     end
   end
 end

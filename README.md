@@ -1,4 +1,4 @@
-# docker_build
+# image_build
 
 [Module description]: #module-description
 [Setup]: #setup
@@ -9,20 +9,22 @@
 [Building multiple images from one manifest]: #building-multiple-images-from-one-manifest
 [Using a Puppet Master]: #using-a-puppet-master
 [Minimizing image size with Rocker]: #minimizing-image-size-with-rocker
+[Building ACI images]: #building-aci-images
 [Limitations]: #limitations
 [Maintainers]: #maintainers
 
 #### Table of Contents
 
-1. [Module description - What is the docker_build module, and what does it
+1. [Module description - What is the image_build module, and what does it
    do?][Module description]
-2. [Setup - The basics of getting started with docker_build][Setup]
+2. [Setup - The basics of getting started with image_build][Setup]
 3. [Usage - How to build Docker containers with Puppet][Usage]
     - [A hello world example][A hello world example]
     - [Involving hiera][Involving hiera]
     - [Building multiple images from one manifest][Building multiple images from one manifest]
     - [Using a Puppet Master][using a Puppet Master]
     - [Minimizing image size with Rocker][Minimizing image size with Rocker]
+    - [Building ACI images][Building ACI images]
 4. [Reference - Sample help output from the tool][Reference]
 5. [Limitations - OS compatibility, etc.][Limitations]
 6. [Maintainers - who maintains this project][Maintainers]
@@ -30,8 +32,9 @@
 
 ## Module description
 
-The basic purpose of `docker_build` is to enable building Docker images
-from Puppet code. Their are two main cases where this can be useful:
+The basic purpose of `image_build` is to enable building various images,
+including Docker images, from Puppet code. Their are two main cases
+where this can be useful:
 
 1. You have an existing Puppet codebase and you're moving some of your
    services to using containers. By sharing the same code between
@@ -40,14 +43,14 @@ from Puppet code. Their are two main cases where this can be useful:
    done.
 2. You're building a lot of images, but scaling Dockerfile means either
    a complex hierachy of images or copy-and-pasting snippets between
-   many individual Dockerfiles. `docker_build` allows for sharing common
+   many individual Dockerfiles. `image_build` allows for sharing common
    functionality as Puppet modules, and Puppet itself provides a rish
    domain-specific language for declarative composition of images.
 
 
 ## Setup
 
-`puppetlabs/docker_build` is a Puppet Module and once released will be
+`puppetlabs/image_build` is a Puppet Module and once released will be
 available on the Forge. For now you'll need to copy it into the correct
 place on your filesystem, or alternatively use `r10k` or `librarian-puppet`
 to install it from git.
@@ -55,21 +58,21 @@ to install it from git.
 The following should work in most cases:
 
 ```
-git clone git@github.com:puppetlabs/puppetlabs-docker_build.git `puppet config print modulepath`/docker_build
+git clone git@github.com:puppetlabs/puppetlabs-image_build.git `puppet config print modulepath`/image_build
 ```
 
 You don't need any additional gems installed unless you are looking to
-work on the module. All you need is a working Docker environment, for
-which I'd recommend Docker for Mac or Docker for Windows or just Docker
-if you're on Linux.
-
+work on the module. All you need is a working Docker environment or
+`acbuild`, for which I'd recommend Docker for Mac or Docker for Windows
+or just installing Docker if you're on Linux. For acbuild you can use
+the [rkt module](https://forge.puppet.com/puppetlabs/rkt).
 
 ## Usage
 
-With the module installed you should have access to a new puppet
-command, `puppet docker`. This has two subcommands, one will trigger a
-build of an image, the other can be used to output the intermediary
-dockerfile.
+With the module installed you should have access to two new puppet
+commands; `puppet docker` and `puppet aci`. These have two subcommands,
+one will trigger a build of an image, the other can be used to output
+the intermediary dockerfile or shell script.
 
 The examples directory contains a set of examples for experimenting with.
 Simply open up `examples/nginx` and run:
@@ -154,7 +157,7 @@ image_name: puppet/nginx
 ```
 
 Now lets build a Docker image. Note that you'll need docker available on
-your host to do so, along with the `docker_build` module installed.
+your host to do so, along with the `image_build` module installed.
 
 ```
 puppet docker build
@@ -212,7 +215,7 @@ The match for the node resource in the Puppet code is done without the
 repository name, in this case the `puppet/` before `node1`.
 
 Note that you may want different metadata for different images.
-`docker_build` will attempt to detect additional metadata in the
+`image_build` will attempt to detect additional metadata in the
 `metadata` folder, and will merge items from `metadata/metadata.yaml`
 with node specific metadata, for instance from `metadata/node1.yaml`
 
@@ -222,7 +225,7 @@ You can see an example of this settup in the `examples/multi` directory.
 ### Using a Puppet Master
 
 The above examples all use local manifests copied to the image during
-build, but `docker_build` also supports using a Puppet Master. You can
+build, but `image_build` also supports using a Puppet Master. You can
 provide metadata via a local metadata file or directory, or by passing
 command line arguments to the build command as shown in the examples
 above. The only change is passing `--master` like so.
@@ -269,7 +272,7 @@ in some way, expect more guidance on that in the future.
 
 ### Minimizing image size with Rocker
 
-`docker_build` supports using the
+`image_build` supports using the
 [Rocker](https://github.com/grammarly/rocker) build tool in place of the
 standard Docker build command. The Rocker output provides a little more
 detail about the build process, but also allows for mounting of folders
@@ -279,6 +282,21 @@ at build time which minimizes the size of the resulting image.
 
 Note that when using Rocker the Puppet tools are not left in the final
 image, reducing it's file size.
+
+
+### Building ACI images
+
+As well as Docker support, `image_build` also supports building
+[ACI](https://github.com/appc/spec/blob/master/spec/aci.md) compatible
+images for use with Rkt or other supported runtimes. This works in the
+same manner as above. The following command should generate a shell
+script which, when run, generates an ACI:
+
+    puppet aci script
+
+And if you simply want to build the ACI directly you can just run:
+
+    puppet aci build
 
 
 ## Reference

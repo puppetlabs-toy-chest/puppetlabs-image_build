@@ -5,6 +5,7 @@ require 'date'
 
 require 'puppet_x/puppetlabs/deep_symbolize_keys'
 require 'puppet_x/puppetlabs/dockerfile'
+require 'puppet_x/puppetlabs/acifile'
 
 module PuppetX
   module Puppetlabs
@@ -14,7 +15,7 @@ module PuppetX
     class InvalidContextError < RuntimeError
     end
 
-    class DockerImageBuilder
+    class ImageBuilder
       attr_accessor :context
 
       def initialize(manifest, args) # rubocop:disable Metrics/AbcSize
@@ -37,6 +38,10 @@ module PuppetX
         validate_context
       end
 
+      def acifile
+        PuppetX::Puppetlabs::Acifile.new(@context)
+      end
+
       def dockerfile
         PuppetX::Puppetlabs::Dockerfile.new(@context)
       end
@@ -53,6 +58,20 @@ module PuppetX
           raise BuildError, e.message
         end
       end
+
+      def build_aci
+        begin
+          PTY.spawn(build_command_aci) do |stdout, stdin, pid|
+            begin
+              stdout.each { |line| print line }
+            rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
+            end
+          end
+        rescue PTY::ChildExited => e
+          raise BuildError, e.message
+        end
+      end
+
 
       private
 
@@ -262,6 +281,9 @@ module PuppetX
         end.join(' ')
       end
 
+      def build_command_aci
+        "sudo bash #{acifile.save.path}"
+      end
 
       def build_command
         dockerfile_path = dockerfile.save.path

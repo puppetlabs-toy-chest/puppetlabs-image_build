@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'puppet_x/puppetlabs/dockerimagebuilder'
+require 'puppet_x/puppetlabs/imagebuilder'
 
-describe PuppetX::Puppetlabs::DockerImageBuilder do
+describe PuppetX::Puppetlabs::ImageBuilder do
   let(:from) { 'debian:8' }
   let(:image_name) { 'puppet/sample' }
   let(:manifest) { Tempfile.new('manifest.pp') }
-  let(:builder) { PuppetX::Puppetlabs::DockerImageBuilder.new(manifest.path, args) }
+  let(:builder) { PuppetX::Puppetlabs::ImageBuilder.new(manifest.path, args) }
   let(:context) { builder.context }
 
   context 'without any arguments' do

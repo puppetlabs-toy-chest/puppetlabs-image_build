@@ -3,7 +3,7 @@ require 'tempfile'
 require 'spec_helper'
 require 'puppet/face'
 
-describe Puppet::Face[:docker, '0.1.0'] do
+describe Puppet::Face[:aci, '0.1.0'] do
   it 'has a default action of build' do
     expect(subject.get_action('build')).to be_default
   end
@@ -14,7 +14,6 @@ describe Puppet::Face[:docker, '0.1.0'] do
 
   {
     inventory: true,
-    rocker: false,
     hiera_config: 'hiera.yaml',
     hiera_data: 'hieradata',
     puppetfile: 'Puppetfile',
@@ -25,7 +24,7 @@ describe Puppet::Face[:docker, '0.1.0'] do
     end
   end
 
-  [:dockerfile, :build].each do |subcommand|
+  [:script, :build].each do |subcommand|
     describe "##{subcommand}" do
       it { is_expected.to respond_to subcommand }
       it { is_expected.to be_action subcommand }
@@ -42,8 +41,8 @@ describe Puppet::Face[:docker, '0.1.0'] do
 
       it 'should have a default value for manifest if not passed explicitly' do
         image_builder = double()
-        allow(image_builder).to receive(:build)
-        allow(image_builder).to receive_message_chain(:dockerfile, :render)
+        allow(image_builder).to receive(:build_aci)
+        allow(image_builder).to receive_message_chain(:acifile, :render)
         expect(PuppetX::Puppetlabs::ImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_return(image_builder)
         expect { subject.send(subcommand) }.not_to raise_error
       end
@@ -53,32 +52,32 @@ describe Puppet::Face[:docker, '0.1.0'] do
   describe "#build specific options" do
     let(:manifest) { Tempfile.new('manifest.pp') }
     it 'should catch issues with the underlying build' do
-      expect_any_instance_of(PuppetX::Puppetlabs::ImageBuilder).to receive(:build).and_raise(PuppetX::Puppetlabs::BuildError)
+      expect_any_instance_of(PuppetX::Puppetlabs::ImageBuilder).to receive(:build_aci).and_raise(PuppetX::Puppetlabs::BuildError)
       expect { subject.build(manifest.path, {image_name: 'sample'}) }.to raise_exception(RuntimeError, /the build process was interupted/)
     end
 
     it 'should not fail if passed a master even when default manifest does not exist' do
       expect(PuppetX::Puppetlabs::ImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_call_original
-      expect_any_instance_of(PuppetX::Puppetlabs::ImageBuilder).to receive(:build)
+      expect_any_instance_of(PuppetX::Puppetlabs::ImageBuilder).to receive(:build_aci)
       expect { subject.build({master: 'puppet', image_name: 'sample'}) }.not_to raise_error
     end
 
     it 'should run with the minimum options' do
-      expect_any_instance_of(PuppetX::Puppetlabs::ImageBuilder).to receive(:build)
+      expect_any_instance_of(PuppetX::Puppetlabs::ImageBuilder).to receive(:build_aci)
       expect { subject.build(manifest.path, {image_name: 'sample'}) }.not_to raise_error
     end
   end
 
-  describe "#dockerfile specific options" do
+  describe "#script specific options" do
     let(:manifest) { Tempfile.new('manifest.pp') }
     it 'should run with the minimum options' do
-      expect_any_instance_of(PuppetX::Puppetlabs::Dockerfile).to receive(:render)
-      expect { subject.dockerfile(manifest.path, {image_name: 'sample'}) }.not_to raise_error
+      expect_any_instance_of(PuppetX::Puppetlabs::Acifile).to receive(:render)
+      expect { subject.script(manifest.path, {image_name: 'sample'}) }.not_to raise_error
     end
     it 'should not fail if passed a master even when default manifest does not exist' do
       expect(PuppetX::Puppetlabs::ImageBuilder).to receive(:new).with('manifests/init.pp', any_args).and_call_original
-      expect_any_instance_of(PuppetX::Puppetlabs::Dockerfile).to receive(:render)
-      expect { subject.dockerfile({master: 'puppet', image_name: 'sample'}) }.not_to raise_error
+      expect_any_instance_of(PuppetX::Puppetlabs::Acifile).to receive(:render)
+      expect { subject.script({master: 'puppet', image_name: 'sample'}) }.not_to raise_error
     end
   end
 end

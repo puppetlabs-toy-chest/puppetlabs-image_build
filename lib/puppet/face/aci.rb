@@ -1,41 +1,13 @@
 require 'puppet_x/puppetlabs/imagebuilder'
 require 'puppet_x/puppetlabs/imagebuilder_face'
 
-PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
-  summary 'Build Docker images and Dockerfiles using Puppet code'
-
-  option '--rocker' do
-    summary 'Use Rocker as the build tool'
-    default_to { false }
-  end
+PuppetX::Puppetlabs::ImageBuilder::Face.define(:aci, '0.1.0') do
+  summary 'Build Aci images and build scripts using Puppet code'
 
   action(:build) do
-    summary 'Discovery resources (including packages, services, users and groups)'
+    summary 'Build an ACI image using Puppet'
     arguments '[<manifest>]'
     default
-
-    [
-      'cgroup-parent STRING',
-      'cpu-period INT',
-      'cpu-quota   INT',
-      'cpu-shares INT',
-      'cpuset-cpus STRING',
-      'cpuset-mems STRING',
-      'disable-content-trust',
-      'force-rm',
-      'isolation STRING',
-      'memory-limit STRING',
-      'memory-swap STRING',
-      'no-cache',
-      'pull',
-      'quiet',
-      'shm-size STRING',
-      'ulimit STRING'
-    ].each do |value|
-      option "--#{value}" do
-        summary "#{value.split.first} argument passed to underlying build tool"
-      end
-    end
 
     option '--autosign-token STRING' do
       summary 'An authentication token used for autosigning master-built images'
@@ -46,7 +18,7 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
       manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
         builder = PuppetX::Puppetlabs::ImageBuilder.new(manifest, args)
-        builder.build
+        builder.build_aci
       rescue PuppetX::Puppetlabs::BuildError => e
         fail "An error occured and the build process was interupted: #{e.message}"
       rescue PuppetX::Puppetlabs::InvalidContextError => e
@@ -55,15 +27,15 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
     end
   end
 
-  action(:dockerfile) do
-    summary 'Discovery resources (including packages, services, users and groups)'
+  action(:script) do
+    summary 'Output a shell script for building an ACI with Puppet'
     arguments '[<manifest>]'
     when_invoked do |*options|
       args = options.pop
       manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
         builder = PuppetX::Puppetlabs::ImageBuilder.new(manifest, args)
-        builder.dockerfile.render
+        builder.acifile.render
       rescue PuppetX::Puppetlabs::InvalidContextError => e
         fail e.message
       end

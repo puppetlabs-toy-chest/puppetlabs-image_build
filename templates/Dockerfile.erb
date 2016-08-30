@@ -5,7 +5,7 @@
 
 <% if rocker %>MOUNT /opt/puppetlabs /etc/puppetlabs /root/.gem<% end %>
 
-<% if labels %>LABEL <%= labels.map { |g| g.split('=') }.map { |k,v| "#{k}=\"#{v}\"" }.join(' ') %><% end %>
+<% if labels && !labels.empty? %>LABEL <%= labels.map { |g| g.split('=') }.map { |k,v| "#{k}=\"#{v}\"" }.join(' ') %><% end %>
 
 <% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
@@ -115,9 +115,9 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
     <%= puppet_path %> inventory all > /inventory.json
 <% end %>
 
-<% if expose %>EXPOSE <%= expose.join(' ') %><% end %>
+<% if expose && !expose.empty? %>EXPOSE <%= expose.join(' ') %><% end %>
 
-<% if entrypoint %>ENTRYPOINT <%= entrypoint.to_s %><% end %>
-<% if cmd %>CMD <%= cmd.to_s %><% end %>
+<% if entrypoint && !entrypoint.empty? %>ENTRYPOINT <%= entrypoint.to_s %><% end %>
+<% if cmd && !cmd.empty? %>CMD <%= cmd.to_s %><% end %>
 
 <% if rocker %>TAG <%= image_name %><% end %>
