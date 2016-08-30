@@ -142,7 +142,7 @@ module PuppetX
       end
 
       def value_to_array(value)
-        @context[value] = @context[value].to_s.split(',') if (@context[value].is_a?(String) || @context[value].is_a?(Fixnum))
+        @context[value] = @context[value].to_s.split(',') if (@context[value].is_a?(String) || @context[value].is_a?(Fixnum) || @context[value].nil?)
       end
 
       def determine_if_using_puppetfile

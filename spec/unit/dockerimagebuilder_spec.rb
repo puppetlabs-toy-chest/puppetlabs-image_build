@@ -41,6 +41,9 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
       it 'the OS codename in an environment variable' do
         expect(context[:environment]).to include(codename: 'jessie')
       end
+      it 'should expand the entrypoint to an array' do
+        expect(context).to include(entrypoint: [])
+      end
     end
     it 'should not pass an autosign token build argument' do
       expect(builder.send(:build_command)).not_to include("--build-arg AUTOSIGN_TOKEN=")
