@@ -23,9 +23,23 @@ begin
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
+ignore_paths = ['contrib/**/*.pp', 'examples/**/*.pp', 'spec/**/*.pp', 'pkg/**/*.pp', 'vendor/**/*']
+
+Rake::Task[:lint].clear
+PuppetLint::RakeTask.new :lint do |config|
+  config.ignore_paths = ignore_paths
+end
+
+PuppetSyntax.exclude_paths = ignore_paths
+
 RuboCop::RakeTask.new
 
 task test: [
+  'check:symlinks',
+  'check:dot_underscore',
+  'check:git_ignore',
+  :lint,
+  :syntax,
   :rubocop,
   :metadata_lint,
   :spec,
