@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'puppet_x/puppetlabs/dockerimagebuilder'
+require 'puppet_x/puppetlabs/imagebuilder'
 
-describe PuppetX::Puppetlabs::DockerImageBuilder do
+describe PuppetX::Puppetlabs::ImageBuilder do
   let(:from) { 'debian:8' }
   let(:image_name) { 'puppet/sample' }
   let(:manifest) { Tempfile.new('manifest.pp') }
-  let(:builder) { PuppetX::Puppetlabs::DockerImageBuilder.new(manifest.path, args) }
+  let(:builder) { PuppetX::Puppetlabs::ImageBuilder.new(manifest.path, args) }
   let(:context) { builder.context }
 
   context 'without any arguments' do
@@ -40,6 +40,9 @@ describe PuppetX::Puppetlabs::DockerImageBuilder do
       end
       it 'the OS codename in an environment variable' do
         expect(context[:environment]).to include(codename: 'jessie')
+      end
+      it 'should expand the entrypoint to an array' do
+        expect(context).to include(entrypoint: [])
       end
     end
     it 'should not pass an autosign token build argument' do

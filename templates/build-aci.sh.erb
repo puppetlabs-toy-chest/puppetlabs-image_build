@@ -1,0 +1,154 @@
+#!/bin/bash
+set -e
+
+if [ "$EUID" -ne 0 ]; then
+  echo "This script uses functionality which requires root privileges"
+  exit 1
+fi
+
+trap "{ export EXT=$?; acbuild --debug end && exit $EXT; }" EXIT
+
+acbuild --debug begin <% if from %>docker://<%= from %><% end %>
+
+<% if maintainer %>
+acbuild --debug annotation add maintainer "<%= maintainer %>"
+<% end %>
+
+acbuild --debug set-name <%= image_name %>
+
+acbuild --debug environment add FACTER_hostname <%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.rktbuilder
+
+<% if environment %>
+  <% environment.each do |name, value| %>
+export <%= name.upcase %>="<%= value %>"
+  <% end %>
+<% end %>
+
+<% if labels %>
+  <% labels.map { |pair| pair.split('=') }.each do |name, value| %>
+acbuild --debug label add <%= name %> "<%= value %>"
+  <% end %>
+<% end %>
+
+<% if os %>
+<% if os == 'ubuntu' or os == 'debian' %>
+acbuild --debug run -- apt-get update
+acbuild --debug run -- apt-get install -y lsb-release wget
+acbuild --debug run -- wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb
+acbuild --debug run -- dpkg -i puppetlabs-release-pc1-"$CODENAME".deb
+acbuild --debug run -- rm puppetlabs-release-pc1-"$CODENAME".deb
+acbuild --debug run -- apt-get update
+acbuild --debug run -- apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME"
+acbuild --debug run -- apt-get clean
+acbuild --debug run -- rm -rf /var/lib/apt/lists/*
+<% elsif os == 'centos' %>
+acbuild run -- rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+acbuild run -- yum upgrade -y
+acbuild run -- yum update -y
+acbuild run -- yum install -y puppet-agent-"$PUPPET_AGENT_VERSION"
+acbuild run -- yum clean all
+<% elsif os == 'alpine' %>
+acbuild run -- apk add --update ca-certificates pciutils ruby ruby-irb ruby-rdoc
+acbuild run -- echo http://dl-4.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
+acbuild run -- apk add --update shadow
+acbuild run -- rm -rf /var/cache/apk/*
+acbuild run -- gem install puppet:"$PUPPET_VERSION" facter:"$FACTER_VERSION"
+acbuild run -- <%= puppet_path %> module install puppetlabs-apk
+# Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
+acbuild run -- rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
+<% end %>
+<% end %>
+
+<% if use_puppetfile && !master %>
+<% if os == 'ubuntu' or os == 'debian' %>
+acbuild run -- apt-get update
+acbuild run -- apt-get install -y git-core
+acbuild run -- <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
+acbuild run -- apt-get clean
+acbuild run -- rm -rf /var/lib/apt/lists/*
+<% elsif os == 'centos' %>
+acbuild run -- yum update
+acbuild run -- yum install -y git
+acbuild run -- <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
+acbuild run -- yum clean all
+<% elsif os == 'alpine' %>
+acbuild run -- apt-get update
+acbuild run -- apk add --update git
+acbuild run -- <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
+acbuild run -- rm -rf /var/cache/apk/*
+<% end %>
+acbuild --debug copy <%= puppetfile %> /Puppetfile
+<% end %>
+
+<% if manifest && !master %>
+acbuild --debug copy <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
+<% end %>
+
+<% if use_hiera && !master %>
+acbuild --debug copy <%= hiera_config %> /hiera.yaml
+acbuild --debug copy <%= hiera_data %> /hieradata
+<% end %>
+
+<% if autosign_token %>#ARG AUTOSIGN_TOKEN<% end %>
+
+<% if os %>
+  <% if master %>
+    <% if os == 'ubuntu' or os == 'debian' %>
+acbuild run -- apt-get update
+<% if autosign_token %>acbuild run -- printf 'custom_attributes:\n    challengePassword: "%s"\n' $AUTOSIGN_TOKEN >> /etc/puppetlabs/puppet/csr_attributes.yaml<% end %>
+<% if master_is_ip %>acbuild run -- echo <%= master_host %> puppet >> /etc/hosts<% end %>
+acbuild run -- <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize
+<% if autosign_token %>acbuild run -- rm /etc/puppetlabs/puppet/csr_attributes.yaml<% end %>
+acbuild run -- apt-get clean
+acbuild run -- rm -rf /var/lib/apt/lists/*
+    <% elsif os == 'centos' %>
+acbuild run -- yum update -y
+<% if autosign_token %>acbuild run -- printf 'custom_attributes:\n    challengePassword: "%s"\n' $AUTOSIGN_TOKEN >> /etc/puppetlabs/puppet/csr_attributes.yaml<% end %>
+<% if master_is_ip %>acbuild run -- echo <%= master_host %> puppet >> /etc/hosts<% end %>
+acbuild run -- <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize
+<% if autosign_token %>acbuild run -- rm /etc/puppetlabs/puppet/csr_attributes.yaml<% end %>
+acbuild run -- yum clean all
+    <% elsif os == 'alpine' %>
+acbuild run -- apk update && \
+<% if autosign_token %>acbuild run -- printf 'custom_attributes:\n    challengePassword: "%s"\n' $AUTOSIGN_TOKEN >> /etc/puppetlabs/puppet/csr_attributes.yaml<% end %>
+<% if master_is_ip %>acbuild run -- echo <%= master_host %> puppet >> /etc/hosts<% end %>
+acbuild run -- <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize
+<% if autosign_token %>acbuild run -- rm /etc/puppetlabs/puppet/csr_attributes.yaml<% end %>
+acbuild run -- rm -rf /var/cache/apk/*
+    <% end %>
+  <% else %>
+    <% if os == 'ubuntu' or os == 'debian' %>
+acbuild run -- apt-get update
+<% if use_puppetfile %>acbuild run -- <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules<% end %>
+acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>
+acbuild run -- apt-get clean
+acbuild run -- rm -rf /var/lib/apt/lists/*
+    <% elsif os == 'centos' %>
+acbuild run -- yum update -y
+<% if use_puppetfile %>acbuild run -- <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules<% end %>
+acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>
+acbuild run -- yum clean all
+    <% elsif os == 'alpine' %>
+acbuild run -- apk update
+<% if use_puppetfile %>acbuild run -- <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules<% end %>
+acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>
+acbuild run -- rm -rf /var/cache/apk/*
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if inventory %>
+acbuild --debug annotation add com.puppet.inventory "/inventory.json"
+acbuild --debug run -- <%= puppet_path %> module install puppetlabs-inventory
+acbuild --debug run -- <%= puppet_path %> inventory all > /inventory.json
+<% end %>
+
+<% if expose %>
+<% expose.each do |port| %>
+acbuild --debug port add http tcp <%= port %>
+<% end %>
+<% end %>
+
+<% if cmd %>acbuild --debug set-exec -- <%= entrypoint.join(' ') %> <%= cmd.join(' ') %><% end %>
+
+acbuild --debug write --overwrite <%= image_name %>.aci
