@@ -1,12 +1,12 @@
 {
-  "name": "puppetlabs-docker_build",
+  "name": "puppetlabs-image_build",
   "version": "0.1.0",
   "author": "Gareth Rushgrove",
-  "summary": "Build Docker images using Puppet code",
+  "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
-  "source": "https://github.com/puppetlabs/puppetlabs-docker_build.git",
-  "project_page": "https://github.com/puppetlabs/puppetlabs-docker_build",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-docker_build/issues",
+  "source": "https://github.com/puppetlabs/puppetlabs-image_build.git",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-image_build",
+  "issues_url": "https://github.com/puppetlabs/puppetlabs-image_build/issues",
   "dependencies": [
   
   ],
