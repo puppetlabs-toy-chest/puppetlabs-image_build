@@ -47,21 +47,18 @@ module PuppetX
       end
 
       def build
-        begin
-          PTY.spawn(build_command) do |stdout, stdin, pid|
-            begin
-              stdout.each { |line| print line }
-            rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
-            end
-          end
-        rescue PTY::ChildExited => e
-          raise BuildError, e.message
-        end
+        run(build_command)
       end
 
       def build_aci
+        run(build_command_aci)
+      end
+
+      private
+
+      def run(command)
         begin
-          PTY.spawn(build_command_aci) do |stdout, stdin, pid|
+          PTY.spawn(command) do |stdout, stdin, pid|
             begin
               stdout.each { |line| print line }
             rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
@@ -71,9 +68,6 @@ module PuppetX
           raise BuildError, e.message
         end
       end
-
-
-      private
 
       def validate_context
         unless @context[:master]
