@@ -276,7 +276,7 @@ module PuppetX
       end
 
       def build_command_aci
-        "sudo bash #{acifile.save.path}"
+        "bash #{acifile.save.path}"
       end
 
       def build_command
