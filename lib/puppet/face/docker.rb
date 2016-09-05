@@ -10,7 +10,7 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
   end
 
   action(:build) do
-    summary 'Discovery resources (including packages, services, users and groups)'
+    summary 'Build a Docker image from Puppet code'
     arguments '[<manifest>]'
     default
 
@@ -56,7 +56,7 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
   end
 
   action(:dockerfile) do
-    summary 'Discovery resources (including packages, services, users and groups)'
+    summary 'Generate a Dockerfile which will run the specified Puppet code'
     arguments '[<manifest>]'
     when_invoked do |*options|
       args = options.pop

@@ -362,10 +362,8 @@ OPTIONS:
   --rocker                       - Use Rocker as the build tool
 
 ACTIONS:
-  build         Discovery resources (including packages, services, users and
-                groups)
-  dockerfile    Discovery resources (including packages, services, users and
-                groups)
+  build         Build a Docker image from Puppet code
+  dockerfile    Generate a Dockerfile which will run the specified Puppet code
 
 See 'puppet man docker' or 'man puppet-docker' for full help.
 ```
