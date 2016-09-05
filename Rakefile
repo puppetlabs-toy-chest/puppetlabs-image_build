@@ -14,6 +14,15 @@ begin
 rescue LoadError # rubocop:disable Lint/HandleExceptions
 end
 
+begin
+  require 'rubycritic/rake_task'
+  RubyCritic::RakeTask.new do |task|
+    task.paths   = FileList['lib/**/*.rb']
+    task.options = '--format=console --no-browser'
+  end
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
+
 RuboCop::RakeTask.new
 
 task test: [

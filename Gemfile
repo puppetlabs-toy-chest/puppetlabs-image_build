@@ -20,6 +20,7 @@ group :development do
   gem 'yard'
   gem 'listen', '<3.1'
   gem 'r10k'
+  gem 'rubycritic', :require => false
 end
 
 group :acceptance do
