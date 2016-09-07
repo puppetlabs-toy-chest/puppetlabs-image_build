@@ -21,6 +21,7 @@ group :development do
   gem 'listen', '<3.1'
   gem 'r10k'
   gem 'rubycritic', :require => false
+  gem 'maintainers'
 end
 
 group :acceptance do
