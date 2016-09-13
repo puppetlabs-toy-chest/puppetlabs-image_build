@@ -250,20 +250,20 @@ module PuppetX
 
       def build_args
         [
-          'cgroup-parent',
-          'cpu-period',
-          'cpu-quota',
-          'cpu-shares',
-          'cpuset-cpus',
-          'cpuset-mems',
+          'cgroup_parent',
+          'cpu_period',
+          'cpu_quota',
+          'cpu_shares',
+          'cpuset_cpus',
+          'cpuset_mems',
           'isolation',
-          'memory-limit',
-          'memory-swap',
-          'shm-size',
+          'memory_limit',
+          'memory_swap',
+          'shm_size',
           'ulimit',
-          'disable-content-trust',
-          'force-rm',
-          'no-cache',
+          'disable_content_trust',
+          'force_rm',
+          'no_cache',
           'pull',
           'quiet',
         ].reject { |arg| @context[arg.to_sym].nil? }
@@ -271,7 +271,8 @@ module PuppetX
 
       def string_args
         build_args.collect do |arg|
-          @context[arg.to_sym] == true ? "--#{arg}" : "--#{arg}=#{@context[arg.to_sym]}"
+          with_hyphen = arg.gsub('_', '-')
+          @context[arg.to_sym] == true ? "--#{with_hyphen}" : "--#{with_hyphen}=#{@context[arg.to_sym]}"
         end.join(' ')
       end
 

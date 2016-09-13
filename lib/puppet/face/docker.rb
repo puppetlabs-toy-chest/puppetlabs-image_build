@@ -43,6 +43,9 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
 
     when_invoked do |*options|
       args = options.pop
+      # no-cache is a boolean option, but Puppet cunningly convert anything begining with no
+      # to false. In thise case this option wants passing straight through to Docker build however
+      args[:no_cache] = true if args.key? :no_cache
       manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
         builder = PuppetX::Puppetlabs::ImageBuilder.new(manifest, args)

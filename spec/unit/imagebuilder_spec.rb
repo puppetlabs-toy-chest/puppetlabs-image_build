@@ -441,7 +441,7 @@ entrypoint:
         Hash[
           :from, from,
           :image_name, image_name,
-          argument.to_sym, value,
+          argument.gsub('-', '_').to_sym, value,
         ]
       end
       it "should pass #{argument} to the underlying build tool" do
@@ -462,7 +462,7 @@ entrypoint:
         Hash[
           :from, from,
           :image_name, image_name,
-          argument.to_sym, true,
+          argument.gsub('-', '_').to_sym, true,
         ]
       end
       it "should pass #{argument} to the underlying build tool" do
