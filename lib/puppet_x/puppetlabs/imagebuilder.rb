@@ -23,6 +23,7 @@ module PuppetX
         load_from_config_file
         add_manifest_to_context(manifest)
         labels_to_array
+        add_label_schema_labels
         env_to_array
         cmd_to_array
         expose_to_array
@@ -37,7 +38,6 @@ module PuppetX
         determine_if_master_is_ip
         validate_context
       end
-
 
       def build
         run(build_command)
@@ -125,6 +125,13 @@ module PuppetX
 
       def labels_to_array
         value_to_array(:labels)
+      end
+
+      def add_label_schema_labels
+        @context[:labels].insert(-1,
+          "org.label-schema.build-date=#{Time.now.utc.iso8601}",
+          'org.label-schema.schema-version=1.0',
+        ) if @context[:label_schema]
       end
 
       def env_to_array

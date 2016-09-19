@@ -38,6 +38,19 @@ shared_examples 'an image builder' do
     end
   end
 
+  context 'with label-schema set to true' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        label_schema: true,
+      }
+    end
+    it 'should by include some label-schema labels' do
+      expect(context[:labels]).to include('org.label-schema.schema-version=1.0')
+    end
+  end
+
   context 'with a single env value specified' do
     let(:args) do
       {
@@ -63,7 +76,7 @@ shared_examples 'an image builder' do
       }
     end
     it 'should expand the labels to an array' do
-      expect(context).to include(labels: ['KEY=value'])
+      expect(context[:labels]).to include('KEY=value')
     end
   end
 

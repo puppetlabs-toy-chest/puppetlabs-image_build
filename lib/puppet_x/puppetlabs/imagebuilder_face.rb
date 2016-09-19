@@ -87,6 +87,11 @@ module PuppetX
       option '--master STRING' do
         summary 'A Puppet Master to use for building images'
       end
+
+      option '--label-schema' do
+        summary 'Add label-schema compatible labels'
+        default_to { true }
+      end
     end
   end
 end
