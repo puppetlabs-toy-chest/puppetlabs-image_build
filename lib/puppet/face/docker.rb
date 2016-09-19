@@ -48,7 +48,7 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
       args[:no_cache] = true if args.key? :no_cache
       manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
-        builder = PuppetX::Puppetlabs::ImageBuilder.new(manifest, args)
+        builder = PuppetX::Puppetlabs::DockerBuilder.new(manifest, args)
         builder.build
       rescue PuppetX::Puppetlabs::BuildError => e
         fail "An error occured and the build process was interupted: #{e.message}"
@@ -65,8 +65,8 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
       args = options.pop
       manifest = options.empty? ? 'manifests/init.pp' : options.first
       begin
-        builder = PuppetX::Puppetlabs::ImageBuilder.new(manifest, args)
-        builder.dockerfile.render
+        builder = PuppetX::Puppetlabs::DockerBuilder.new(manifest, args)
+        builder.build_file.render
       rescue PuppetX::Puppetlabs::InvalidContextError => e
         fail e.message
       end

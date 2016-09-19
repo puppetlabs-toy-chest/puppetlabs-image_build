@@ -38,20 +38,9 @@ module PuppetX
         validate_context
       end
 
-      def acifile
-        PuppetX::Puppetlabs::Acifile.new(@context)
-      end
-
-      def dockerfile
-        PuppetX::Puppetlabs::Dockerfile.new(@context)
-      end
 
       def build
         run(build_command)
-      end
-
-      def build_aci
-        run(build_command_aci)
       end
 
       private
@@ -248,6 +237,20 @@ module PuppetX
         @context[:hostname] = @context[:image_name].split('/').pop if @context[:image_name]
       end
 
+      def exists_and_is_file(value)
+        @context[value] && File.file?(@context[value])
+      end
+
+      def exists_and_is_directory(value)
+        @context[value] && File.directory?(@context[value])
+      end
+    end
+
+    class DockerBuilder < ImageBuilder
+      def build_file
+        PuppetX::Puppetlabs::Dockerfile.new(@context)
+      end
+
       def build_args
         [
           'cgroup_parent',
@@ -276,12 +279,8 @@ module PuppetX
         end.join(' ')
       end
 
-      def build_command_aci
-        "bash #{acifile.save.path}"
-      end
-
       def build_command
-        dockerfile_path = dockerfile.save.path
+        dockerfile_path = build_file.save.path
         autosign_string = @context[:autosign_token].nil? ? '' : "--build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]}"
         if @context[:rocker]
           "rocker build #{autosign_string} #{string_args} -f #{dockerfile_path} ."
@@ -289,13 +288,15 @@ module PuppetX
           "docker build #{autosign_string} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
       end
+    end
 
-      def exists_and_is_file(value)
-        @context[value] && File.file?(@context[value])
+    class AciBuilder < ImageBuilder
+      def build_file
+        PuppetX::Puppetlabs::Acifile.new(@context)
       end
 
-      def exists_and_is_directory(value)
-        @context[value] && File.directory?(@context[value])
+      def build_command
+        "bash #{build_file.save.path}"
       end
     end
   end
