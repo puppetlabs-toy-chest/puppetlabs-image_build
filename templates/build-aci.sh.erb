@@ -120,18 +120,18 @@ acbuild run -- rm -rf /var/cache/apk/*
     <% if os == 'ubuntu' or os == 'debian' %>
 acbuild run -- apt-get update
 <% if use_puppetfile %>acbuild run -- <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules<% end %>
-acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>
+acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management=true
 acbuild run -- apt-get clean
 acbuild run -- rm -rf /var/lib/apt/lists/*
     <% elsif os == 'centos' %>
 acbuild run -- yum update -y
 <% if use_puppetfile %>acbuild run -- <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules<% end %>
-acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>
+acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management=true
 acbuild run -- yum clean all
     <% elsif os == 'alpine' %>
 acbuild run -- apk update
 <% if use_puppetfile %>acbuild run -- <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules<% end %>
-acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %>
+acbuild run -- <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management=true
 acbuild run -- rm -rf /var/cache/apk/*
     <% end %>
   <% end %>
