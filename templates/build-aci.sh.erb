@@ -67,7 +67,7 @@ acbuild run -- <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
 acbuild run -- apt-get clean
 acbuild run -- rm -rf /var/lib/apt/lists/*
 <% elsif os == 'centos' %>
-acbuild run -- yum update
+acbuild run -- yum update -y
 acbuild run -- yum install -y git
 acbuild run -- <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
 acbuild run -- yum clean all
