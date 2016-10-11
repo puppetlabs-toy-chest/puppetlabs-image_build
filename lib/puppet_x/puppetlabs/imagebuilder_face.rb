@@ -90,7 +90,7 @@ module PuppetX
 
       option '--label-schema' do
         summary 'Add label-schema compatible labels'
-        default_to { true }
+        default_to { false }
       end
     end
   end
