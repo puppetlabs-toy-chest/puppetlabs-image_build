@@ -398,7 +398,7 @@ image_name: #{image_name}
     it 'the image_name value from the config file' do
       expect(context).to include(image_name: image_name)
     end
-    context 'do' do
+    context 'providing a value in a file and as an argument' do
       let(:new_image_name) { 'puppet/different' }
       let(:args) do
         {
@@ -406,8 +406,8 @@ image_name: #{image_name}
           image_name: new_image_name,
         }
       end
-      it 'the image_name value to have been overriden' do
-        expect(context).to include(image_name: new_image_name)
+      it 'hould use the value from the file' do
+        expect(context).not_to include(image_name: new_image_name)
       end
     end
   end
