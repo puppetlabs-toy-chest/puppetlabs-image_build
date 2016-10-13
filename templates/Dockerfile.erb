@@ -7,9 +7,11 @@
 
 <% if labels && !labels.empty? %>LABEL <%= labels.map { |g| g.split('=') }.map { |k,v| "#{k}=\"#{v}\"" }.join(' ') %><% end %>
 
+<% if apt_proxy %>ARG APT_PROXY<% end %>
+
 <% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
-RUN apt-get update && \
+RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     apt-get install -y lsb-release wget && \
     wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb && \
     dpkg -i puppetlabs-release-pc1-"$CODENAME".deb && \
@@ -17,7 +19,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
 RUN rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm && \
     yum upgrade -y && \
@@ -45,11 +47,11 @@ RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockde
 
 <% if use_puppetfile && !master %>
 <% if os == 'ubuntu' or os == 'debian' %>
-RUN apt-get update && \
+RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     apt-get install -y git-core && \
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
 RUN yum update -y && \
     yum install -y git && \
@@ -78,10 +80,10 @@ COPY <%= hiera_data %> /hieradata
 <% if os %>
   <% if master %>
     <% if os == 'ubuntu' or os == 'debian' %>
-RUN apt-get update && \
+RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     <% if autosign_token %>printf 'custom_attributes:\n    challengePassword: "%s"\n' $AUTOSIGN_TOKEN >> /etc/puppetlabs/puppet/csr_attributes.yaml && <% end %><% if master_is_ip %>echo <%= master_host %> puppet >> /etc/hosts && <% end %>FACTER_hostname=<%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.dockerbuilder <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize<% if autosign_token %> && rm /etc/puppetlabs/puppet/csr_attributes.yaml<% end %> && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
     <% elsif os == 'centos' %>
 RUN yum update -y && \
     <% if autosign_token %>printf 'custom_attributes:\n    challengePassword: "%s"\n' $AUTOSIGN_TOKEN >> /etc/puppetlabs/puppet/csr_attributes.yaml && <% end %><% if master_is_ip %>echo <%= master_host %> puppet >> /etc/hosts && <% end %>FACTER_hostname=<%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.dockerbuilder <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize<% if autosign_token %> && rm /etc/puppetlabs/puppet/csr_attributes.yaml<% end %> && \
@@ -93,10 +95,10 @@ RUN apk update && \
     <% end %>
   <% else %>
     <% if os == 'ubuntu' or os == 'debian' %>
-RUN apt-get update && \
+RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %> FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
     <% elsif os == 'centos' %>
 RUN yum update -y && \
     <% if use_puppetfile %><%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules && <% end %> FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management && \

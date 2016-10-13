@@ -128,9 +128,10 @@ module PuppetX
       end
 
       def add_label_schema_labels
-        @context[:labels].insert(-1,
+        @context[:labels].insert(
+          -1,
           "org.label-schema.build-date=#{Time.now.utc.iso8601}",
-          'org.label-schema.schema-version=1.0',
+          'org.label-schema.schema-version=1.0'
         ) if @context[:label_schema]
       end
 
@@ -281,18 +282,29 @@ module PuppetX
 
       def string_args
         build_args.collect do |arg|
-          with_hyphen = arg.gsub('_', '-')
+          with_hyphen = arg.tr('_', '-')
           @context[arg.to_sym] == true ? "--#{with_hyphen}" : "--#{with_hyphen}=#{@context[arg.to_sym]}"
         end.join(' ')
       end
 
+      def autosign_string
+        @context[:autosign_token].nil? ? '' : "--build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]}"
+      end
+
+      def proxy_string
+        @context[:http_proxy].nil? ? '' : "--build-arg HTTP_PROXY=#{@context[:http_proxy]}"
+      end
+
+      def apt_proxy_string
+        @context[:apt_proxy].nil? ? '' : "--build-arg APT_PROXY=#{@context[:apt_proxy]}"
+      end
+
       def build_command
         dockerfile_path = build_file.save.path
-        autosign_string = @context[:autosign_token].nil? ? '' : "--build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]}"
         if @context[:rocker]
-          "rocker build #{autosign_string} #{string_args} -f #{dockerfile_path} ."
+          "rocker build #{autosign_string} #{apt_proxy_string} #{proxy_string} #{string_args} -f #{dockerfile_path} ."
         else
-          "docker build #{autosign_string} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
+          "docker build #{autosign_string} #{apt_proxy_string} #{proxy_string} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
       end
     end

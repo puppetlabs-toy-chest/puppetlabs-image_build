@@ -10,6 +10,8 @@ describe PuppetX::Puppetlabs::DockerBuilder do
 
   it_behaves_like 'an image builder'
   it_behaves_like 'an autosign capable builder'
+  it_behaves_like 'a builder capable of utilising an HTTP proxy'
+  it_behaves_like 'a builder capable of utilising an APT cache'
 
   context 'with minimal arguments' do
     let(:args) do
@@ -75,7 +77,7 @@ describe PuppetX::Puppetlabs::DockerBuilder do
         Hash[
           :from, from,
           :image_name, image_name,
-          argument.gsub('-', '_').to_sym, value,
+          argument.tr('-', '_').to_sym, value,
         ]
       end
       it "should pass #{argument} to the underlying build tool" do
@@ -96,7 +98,7 @@ describe PuppetX::Puppetlabs::DockerBuilder do
         Hash[
           :from, from,
           :image_name, image_name,
-          argument.gsub('-', '_').to_sym, true,
+          argument.tr('-', '_').to_sym, true,
         ]
       end
       it "should pass #{argument} to the underlying build tool" do

@@ -37,6 +37,14 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
       end
     end
 
+    option '--apt-proxy STRING' do
+      summary 'A caching proxy for APT packages'
+    end
+
+    option '--http-proxy STRING' do
+      summary 'An HTTP proxy to use for outgoing traffic during build'
+    end
+
     option '--autosign-token STRING' do
       summary 'An authentication token used for autosigning master-built images'
     end
