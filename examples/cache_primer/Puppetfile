@@ -1,0 +1,7 @@
+forge 'https://forgeapi.puppetlabs.com'
+
+mod 'jfryman/nginx'
+mod 'puppetlabs/apt'
+mod 'puppetlabs/stdlib'
+mod 'puppetlabs/concat'
+mod 'puppetlabs/dummy_service'
