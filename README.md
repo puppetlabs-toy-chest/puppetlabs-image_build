@@ -33,7 +33,7 @@
 ## Module description
 
 The basic purpose of `image_build` is to enable building various images,
-including Docker images, from Puppet code. Their are two main cases
+including Docker images, from Puppet code. There are two main cases
 where this can be useful:
 
 1. You have an existing Puppet codebase and you're moving some of your
@@ -44,25 +44,22 @@ where this can be useful:
 2. You're building a lot of images, but scaling Dockerfile means either
    a complex hierachy of images or copy-and-pasting snippets between
    many individual Dockerfiles. `image_build` allows for sharing common
-   functionality as Puppet modules, and Puppet itself provides a rish
+   functionality as Puppet modules, and Puppet itself provides a rich
    domain-specific language for declarative composition of images.
 
 
 ## Setup
 
-`puppetlabs/image_build` is a Puppet Module and once released will be
-available on the Forge. For now you'll need to copy it into the correct
-place on your filesystem, or alternatively use `r10k` or `librarian-puppet`
-to install it from git.
+`puppetlabs/image_build` is a Puppet Module and is available on the Forge.
 
 The following should work in most cases:
 
 ```
-git clone git@github.com:puppetlabs/puppetlabs-image_build.git `puppet config print modulepath`/image_build
+puppet module install puppetlabs/image_build
 ```
 
 You don't need any additional gems installed unless you are looking to
-work on the module. All you need is a working Docker environment or
+work on developing the module. All you need is a working Docker environment or
 `acbuild`, for which I'd recommend Docker for Mac or Docker for Windows
 or just installing Docker if you're on Linux. For acbuild you can use
 the [rkt module](https://forge.puppet.com/puppetlabs/rkt).
@@ -87,7 +84,7 @@ line.
 
     puppet docker build --image-name puppet/sample --cmd nginx --expose 80
 
-See the full help page for other arguments for specificing different
+See the full help page for other arguments for specifying different
 base images, setting a maintainer, using Rocker instead of Docker for the
 build and much more.
 
@@ -286,7 +283,7 @@ image, reducing it's file size.
 
 ### Building ACI images
 
-As well as Docker support, `image_build` also supports building
+As well as Docker support, `image_build` also experimentally supports building
 [ACI](https://github.com/appc/spec/blob/master/spec/aci.md) compatible
 images for use with Rkt or other supported runtimes. This works in the
 same manner as above. The following command should generate a shell
@@ -369,6 +366,10 @@ See 'puppet man docker' or 'man puppet-docker' for full help.
 ```
 
 ## Limitations
+
+The module currently does not support building Windows containers, or
+building containers from a Windows machine. We'll be adding support for
+these in the future.
 
 ## Maintainers
 
