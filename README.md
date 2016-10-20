@@ -164,7 +164,7 @@ And finally lets run our new image. We expose the webserver on port 8080
 to the local host.
 
 ```
-$ docker run -d -p 8080:80 garethr/nginx-test
+$ docker run -d -p 8080:80 puppet/nginx
 83d5fbe370e84d424c71c1c038ad1f5892fec579d28b9905cd1e379f9b89e36d
 $ curl http://0.0.0.0:8080
 Hello Puppet and Docker%
