@@ -1,7 +1,7 @@
 {
   "name": "puppetlabs-image_build",
   "version": "0.1.0",
-  "author": "Gareth Rushgrove",
+  "author": "Puppet",
   "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-image_build.git",
