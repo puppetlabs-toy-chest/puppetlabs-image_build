@@ -103,7 +103,7 @@ Lets see a simple hello world example. We'll create a Docker image
 running Nginx and serving a simple text file.
 
 First lets use a few Puppet modules from the Forge. We'll use the
-existing [nginx module](https://forge.puppet.com/jfryman/nginx) and
+existing [nginx module](https://forge.puppet.com/puppet/nginx) and
 we'll specify it's dependencies. We're also using
 [dummy_service](https://forge.puppet.com/puppetlabs/dummy_service) to
 ignore service resources in the Nginx module.
@@ -112,7 +112,7 @@ ignore service resources in the Nginx module.
 $ cat Puppetfile
 forge 'https://forgeapi.puppetlabs.com'
 
-mod 'jfryman/nginx'
+mod 'puppet/nginx'
 mod 'puppetlabs/stdlib'
 mod 'puppetlabs/concat'
 mod 'puppetlabs/apt'
