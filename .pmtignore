@@ -1,2 +1,3 @@
 junit/**
 log/**/**
+examples/master/code/environments/production/modules/**
