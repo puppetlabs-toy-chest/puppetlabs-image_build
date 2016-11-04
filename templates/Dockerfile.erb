@@ -12,12 +12,14 @@
 <% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
-    apt-get install -y lsb-release wget && \
+    apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
     wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb && \
     dpkg -i puppetlabs-release-pc1-"$CODENAME".deb && \
     rm puppetlabs-release-pc1-"$CODENAME".deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
+    apt-get remove --purge -y lsb-release wget ca-certificates && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
@@ -48,8 +50,10 @@ RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockde
 <% if use_puppetfile && !master %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
-    apt-get install -y git-core && \
+    apt-get install --no-install-recommends -y git-core && \
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
+    apt-get remove --purge -y git-core && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
@@ -83,6 +87,7 @@ COPY <%= hiera_data %> /hieradata
     <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     <% if autosign_token %>printf 'custom_attributes:\n    challengePassword: "%s"\n' $AUTOSIGN_TOKEN >> /etc/puppetlabs/puppet/csr_attributes.yaml && <% end %><% if master_is_ip %>echo <%= master_host %> puppet >> /etc/hosts && <% end %>FACTER_hostname=<%= hostname %>.<%= DateTime.now.rfc3339.gsub(/[^0-9a-z]/i, '') %>.dockerbuilder <%= puppet_path %> agent --server <% if master_is_ip %>puppet<% else %><%= master_host %><% end %><% if master_port %> --masterport <%= master_port %><% end %> --verbose --onetime --no-daemonize --show_diff --summarize<% if autosign_token %> && rm /etc/puppetlabs/puppet/csr_attributes.yaml<% end %> && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
     <% elsif os == 'centos' %>
@@ -98,6 +103,7 @@ RUN apk update && \
     <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
     <% elsif os == 'centos' %>
