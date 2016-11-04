@@ -371,6 +371,10 @@ The module currently does not support building Windows containers, or
 building containers from a Windows machine. We'll be adding support for
 these in the future.
 
+The inventory functionality does not work correctly on Centos 6 based
+images, so if you're using Centos 6 then you need to pass the
+`--no-inventory` flag.
+
 ## Maintainers
 
 This repository is maintained by: Gareth Rushgrove <gareth@puppet.com>.

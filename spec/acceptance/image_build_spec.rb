@@ -24,16 +24,16 @@ describe 'image_build' do
   end
 
   it 'should successfully generate a dockerfile' do
-    expect(command('cd /tmp/nginx; puppet docker dockerfile manifests/init.pp').exit_status).to eq 0
+    expect(command('cd /tmp/nginx; puppet docker dockerfile --image-name nginx').exit_status).to eq 0
   end
 
   it 'should successfully generate a aci build script' do
-    expect(command('cd /tmp/nginx; puppet aci script manifests/init.pp').exit_status).to eq 0
+    expect(command('cd /tmp/nginx; puppet aci script manifests/init.pp --image-name nginx').exit_status).to eq 0
   end
 
   context 'running a docker build' do
     before(:all) do
-      @exit_status = command('cd /tmp/nginx; puppet docker build').exit_status
+      @exit_status = command('cd /tmp/nginx; puppet docker build --image-name nginx').exit_status
     end
     it 'should successfully run docker build' do
       expect(@exit_status).to eq 0
@@ -46,9 +46,24 @@ describe 'image_build' do
     end
   end
 
+  context 'running a docker build with an alternative image' do
+    before(:all) do
+      @exit_status = command('cd /tmp/nginx; puppet docker build --image-name nginx-centos --from centos:6 --no-inventory').exit_status
+    end
+    it 'should successfully run docker build' do
+      expect(@exit_status).to eq 0
+    end
+    it 'should result in a base image being pulled' do
+      expect(docker_image('centos:6')).to exist
+    end
+    it 'should result in an image being created' do
+      expect(docker_image('nginx-centos:latest')).to exist
+    end
+  end
+
   context 'running an aci build' do
     before(:all) do
-      @exit_status = command('cd /tmp/nginx; puppet aci build').exit_status
+      @exit_status = command('cd /tmp/nginx; puppet aci build --image-name nginx').exit_status
     end
     it 'should successfully run acbuild' do
       expect(@exit_status).to eq 0
