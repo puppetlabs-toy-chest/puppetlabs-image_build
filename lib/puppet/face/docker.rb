@@ -1,7 +1,7 @@
 require 'puppet_x/puppetlabs/imagebuilder'
 require 'puppet_x/puppetlabs/imagebuilder_face'
 
-PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
+PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do # rubocop:disable Metrics/BlockLength
   summary 'Build Docker images and Dockerfiles using Puppet code'
 
   option '--rocker' do
@@ -9,7 +9,7 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
     default_to { false }
   end
 
-  action(:build) do
+  action(:build) do # rubocop:disable Metrics/BlockLength
     summary 'Build a Docker image from Puppet code'
     arguments '[<manifest>]'
     default

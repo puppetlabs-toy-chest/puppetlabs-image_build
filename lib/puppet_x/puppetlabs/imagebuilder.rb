@@ -128,11 +128,13 @@ module PuppetX
       end
 
       def add_label_schema_labels
-        @context[:labels].insert(
-          -1,
-          "org.label-schema.build-date=#{Time.now.utc.iso8601}",
-          'org.label-schema.schema-version=1.0'
-        ) if @context[:label_schema]
+        if @context[:label_schema]
+          @context[:labels].insert(
+            -1,
+            "org.label-schema.build-date=#{Time.now.utc.iso8601}",
+            'org.label-schema.schema-version=1.0'
+          )
+        end
       end
 
       def env_to_array
@@ -184,7 +186,7 @@ module PuppetX
                                end
       end
 
-      def determine_environment_vars # rubocop:disable Metrics/AbcSize,Metrics/PerceivedComplexity
+      def determine_environment_vars # rubocop:disable Metrics/AbcSize
         codename = nil
         puppet_version = nil
         facter_version = nil
@@ -207,7 +209,6 @@ module PuppetX
                      when 'wheezy', /^7/
                        'wheezy'
                      end
-        when 'centos'
         when 'alpine'
           facter_version = '2.4.6' # latest version available as a gem
           puppet_version = case @context[:puppet_agent_version]
@@ -236,9 +237,11 @@ module PuppetX
           puppet_version: puppet_version,
           facter_version: facter_version,
         }.reject { |name, value| value.nil? }
-        @context[:env].map { |pair| pair.split('=') }.each do |name, value|
-          @context[:environment][name] = value
-        end unless @context[:env].nil?
+        unless @context[:env].nil?
+          @context[:env].map { |pair| pair.split('=') }.each do |name, value|
+            @context[:environment][name] = value
+          end
+        end
       end
 
       def determine_hostname

@@ -1,7 +1,7 @@
 require 'puppet_x/puppetlabs/imagebuilder'
 require 'puppet_x/puppetlabs/imagebuilder_face'
 
-PuppetX::Puppetlabs::ImageBuilder::Face.define(:aci, '0.1.0') do
+PuppetX::Puppetlabs::ImageBuilder::Face.define(:aci, '0.1.0') do # rubocop:disable Metrics/BlockLength
   summary 'Build Aci images and build scripts using Puppet code'
 
   action(:build) do
