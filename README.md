@@ -4,6 +4,8 @@
 Forge](https://img.shields.io/puppetforge/v/puppetlabs/image_build.svg)](https://forge.puppetlabs.com/puppetlabs/image_build)
 [![Build
 Status](https://secure.travis-ci.org/puppetlabs/puppetlabs-image_build.png)](https://travis-ci.org/puppetlabs/puppetlabs-image_build)
+[![Coverage
+Status](https://coveralls.io/repos/github/puppetlabs/puppetlabs-image_build/badge.svg?branch=master)](https://coveralls.io/github/puppetlabs/puppetlabs-image_build?branch=master)
 
 [Module description]: #module-description
 [Setup]: #setup
