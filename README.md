@@ -1,5 +1,10 @@
 # image_build
 
+[![Puppet
+Forge](https://img.shields.io/puppetforge/v/puppetlabs/image_build.svg)](https://forge.puppetlabs.com/puppetlabs/image_build)
+[![Build
+Status](https://secure.travis-ci.org/puppetlabs/puppetlabs-image_build.png)](https://travis-ci.org/puppetlabs/puppetlabs-image_build)
+
 [Module description]: #module-description
 [Setup]: #setup
 [Usage]: #usage
