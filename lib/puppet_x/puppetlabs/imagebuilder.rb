@@ -18,7 +18,7 @@ module PuppetX
     class ImageBuilder
       attr_accessor :context
 
-      def initialize(manifest, args) # rubocop:disable Metrics/AbcSize
+      def initialize(manifest, args)
         @context = args
         load_from_config_file
         add_manifest_to_context(manifest)
@@ -46,16 +46,14 @@ module PuppetX
       private
 
       def run(command)
-        begin
-          PTY.spawn(command) do |stdout, stdin, pid|
-            begin
-              stdout.each { |line| print line }
-            rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
-            end
+        PTY.spawn(command) do |stdout, _stdin, _pid|
+          begin
+            stdout.each { |line| print line }
+          rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
           end
-        rescue PTY::ChildExited => e
-          raise BuildError, e.message
         end
+      rescue PTY::ChildExited => e
+        raise BuildError, e.message
       end
 
       def validate_context
@@ -82,14 +80,13 @@ module PuppetX
       end
 
       def determine_master_host_and_port
-        if @context[:master]
-          parts = @context[:master].split(':')
-          if parts.length == 2
-            @context[:master_port] = parts[1]
-            @context[:master_host] = parts[0]
-          else
-            @context[:master_host] = @context[:master]
-          end
+        return unless @context[:master]
+        parts = @context[:master].split(':')
+        if parts.length == 2
+          @context[:master_port] = parts[1]
+          @context[:master_host] = parts[0]
+        else
+          @context[:master_host] = @context[:master]
         end
       end
 
@@ -113,14 +110,13 @@ module PuppetX
 
       def load_from_config_file
         default_config = find_metadata_file(@context[:config_file])
-        if @context[:config_file] && default_config
-          begin
-            metadata = YAML.load_file(default_config).deep_symbolize_keys
-          rescue Psych::SyntaxError
-            raise InvalidContextError, "the metadata file #{default_config} does not appear to be valid YAML"
-          end
-          @context = @context.merge(metadata).merge(host_config) if metadata.is_a?(Hash)
+        return unless @context[:config_file] && default_config
+        begin
+          metadata = YAML.load_file(default_config).deep_symbolize_keys
+        rescue Psych::SyntaxError
+          raise InvalidContextError, "the metadata file #{default_config} does not appear to be valid YAML"
         end
+        @context = @context.merge(metadata).merge(host_config) if metadata.is_a?(Hash)
       end
 
       def labels_to_array
@@ -128,13 +124,12 @@ module PuppetX
       end
 
       def add_label_schema_labels
-        if @context[:label_schema]
-          @context[:labels].insert(
-            -1,
-            "org.label-schema.build-date=#{Time.now.utc.iso8601}",
-            'org.label-schema.schema-version=1.0'
-          )
-        end
+        return unless @context[:label_schema]
+        @context[:labels].insert(
+          -1,
+          "org.label-schema.build-date=#{Time.now.utc.iso8601}",
+          'org.label-schema.schema-version=1.0'
+        )
       end
 
       def env_to_array
@@ -154,25 +149,22 @@ module PuppetX
       end
 
       def value_to_array(value)
-        @context[value] = @context[value].to_s.split(',') if (@context[value].is_a?(String) || @context[value].is_a?(Integer) || @context[value].nil?)
+        @context[value] = @context[value].to_s.split(',') if @context[value].is_a?(String) || @context[value].is_a?(Integer) || @context[value].nil?
       end
 
       def determine_if_using_puppetfile
-        if exists_and_is_file(:puppetfile)
-          @context[:use_puppetfile] = true
-        end
+        return unless exists_and_is_file(:puppetfile)
+        @context[:use_puppetfile] = true
       end
 
       def determine_if_using_hiera
-        if exists_and_is_file(:hiera_config) && exists_and_is_directory(:hiera_data)
-          @context[:use_hiera] = true
-        end
+        return unless exists_and_is_file(:hiera_config) && exists_and_is_directory(:hiera_data)
+        @context[:use_hiera] = true
       end
 
       def determine_os
-        if @context[:from]
-          @context[:os], @context[:os_version] = @context[:from].split(':') unless @context[:os]
-        end
+        return unless @context[:from]
+        @context[:os], @context[:os_version] = @context[:from].split(':') unless @context[:os]
       end
 
       def determine_paths
@@ -186,7 +178,7 @@ module PuppetX
                                end
       end
 
-      def determine_environment_vars # rubocop:disable Metrics/AbcSize
+      def determine_environment_vars
         codename = nil
         puppet_version = nil
         facter_version = nil
@@ -236,11 +228,11 @@ module PuppetX
           codename: codename,
           puppet_version: puppet_version,
           facter_version: facter_version,
-        }.reject { |name, value| value.nil? }
-        unless @context[:env].nil?
-          @context[:env].map { |pair| pair.split('=') }.each do |name, value|
-            @context[:environment][name] = value
-          end
+        }.reject { |_name, value| value.nil? }
+
+        return if @context[:env].nil?
+        @context[:env].map { |pair| pair.split('=') }.each do |name, value|
+          @context[:environment][name] = value
         end
       end
 
@@ -263,24 +255,24 @@ module PuppetX
       end
 
       def build_args
-        [
-          'cgroup_parent',
-          'cpu_period',
-          'cpu_quota',
-          'cpu_shares',
-          'cpuset_cpus',
-          'cpuset_mems',
-          'isolation',
-          'memory_limit',
-          'memory_swap',
-          'shm_size',
-          'ulimit',
-          'disable_content_trust',
-          'force_rm',
-          'no_cache',
-          'pull',
-          'quiet',
-        ].reject { |arg| @context[arg.to_sym].nil? }
+        %w(
+          cgroup_parent
+          cpu_period
+          cpu_quota
+          cpu_shares
+          cpuset_cpus
+          cpuset_mems
+          isolation
+          memory_limit
+          memory_swap
+          shm_size
+          ulimit
+          disable_content_trust
+          force_rm
+          no_cache
+          pull
+          quiet
+        ).reject { |arg| @context[arg.to_sym].nil? }
       end
 
       def string_args

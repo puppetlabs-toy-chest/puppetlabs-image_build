@@ -8,6 +8,11 @@ module PuppetX
         default_to { 'ubuntu:16.04' }
       end
 
+      option '--skip-update' do
+        summary 'Skip the updates Puppet does for the respective OS'
+        default_to { false }
+      end
+
       option '--maintainer STRING' do
         summary 'Name and email address for the maintainer of the resulting image'
       end

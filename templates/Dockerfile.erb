@@ -9,6 +9,9 @@
 
 <% if apt_proxy %>ARG APT_PROXY<% end %>
 
+WORKDIR /
+
+<% unless skip_update %>
 <% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
@@ -18,7 +21,7 @@ RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/ap
     rm puppetlabs-release-pc1-"$CODENAME".deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
-    apt-get remove --purge -y lsb-release wget ca-certificates && \
+    apt-get remove --purge -y wget ca-certificates && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
@@ -46,8 +49,10 @@ RUN apk add --update \
 RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
 <% end %>
 <% end %>
+<% end %>
 
 <% if use_puppetfile && !master %>
+<% unless skip_update %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     apt-get install --no-install-recommends -y git-core && \
@@ -66,6 +71,7 @@ RUN apt-get update && \
     apk add --update git && \
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
     rm -rf /var/cache/apk/*
+<% end %>
 <% end %>
 COPY <%= puppetfile %> /Puppetfile
 RUN <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules
