@@ -70,6 +70,11 @@ module PuppetX
         default_to { 'Puppetfile' }
       end
 
+      option '--factfile STRING' do
+        summary 'Enable use of factfile to install modules depending on facts during build'
+        default_to { false }
+      end
+
       option '--image-name STRING' do
         summary 'The name of the resulting image'
       end

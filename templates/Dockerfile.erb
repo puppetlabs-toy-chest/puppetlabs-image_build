@@ -21,12 +21,14 @@ RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/ap
     apt-get remove --purge -y lsb-release wget ca-certificates && \
     apt-get autoremove -y && \
     apt-get clean && \
+    mkdir -p /etc/puppetlabs/facter/facts.d/ && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
 RUN rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-<%= os_version %>.noarch.rpm && \
     yum upgrade -y && \
     yum update -y && \
     yum install -y puppet-agent-"$PUPPET_AGENT_VERSION" && \
+    mkdir -p /etc/puppetlabs/facter/facts.d/ && \
     yum clean all
 <% elsif os == 'alpine' %>
 RUN apk add --update \
@@ -45,6 +47,10 @@ RUN apk add --update \
 # Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
 RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
 <% end %>
+<% end %>
+
+<% if use_factfile %>
+    COPY <%= factfile %> /etc/puppetlabs/facter/facts.d/custom_facts.txt
 <% end %>
 
 <% if use_puppetfile && !master %>
