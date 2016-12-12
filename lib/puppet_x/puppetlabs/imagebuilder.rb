@@ -177,8 +177,9 @@ module PuppetX
                                  ['/opt/puppetlabs/bin/puppet', '/opt/puppetlabs/puppet/bin/gem', '/opt/puppetlabs/puppet/bin/r10k']
                                end
       end
-
-      def determine_environment_vars
+      
+      #rubocop:disable Metrics/PerceivedComplexity 
+      def determine_environment_vars # rubocop:disable Metrics/AbcSize
         codename = nil
         puppet_version = nil
         facter_version = nil
@@ -204,6 +205,24 @@ module PuppetX
         when 'alpine'
           facter_version = '2.4.6' # latest version available as a gem
           puppet_version = case @context[:puppet_agent_version]
+                           when '1.8.2'
+                             '4.8.1'
+                           when '1.8.1'
+                             '4.8.1'
+                           when '1.8.0'
+                             '4.8.0'
+                           when '1.7.1'
+                             '4.7.0'
+                           when '1.7.0'
+                             '4.7.0'
+                           when '1.6.2'
+                             '4.6.2'
+                           when '1.6.1'
+                             '4.6.1'
+                           when '1.6.0'
+                             '4.6.0'
+                           when '1.5.3'
+                             '4.5.3'                           
                            when '1.5.2'
                              '4.5.2'
                            when '1.5.1'
