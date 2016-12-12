@@ -1,33 +1,33 @@
 source 'https://rubygems.org'
 
 group :test do
-  gem 'rake'
+  gem 'coveralls', require: false
+  gem 'metadata-json-lint'
   gem 'puppet', ENV['PUPPET_GEM_VERSION'] || '~> 4'
   gem 'puppetlabs_spec_helper'
-  gem 'metadata-json-lint'
+  gem 'rake'
   gem 'rspec'
   gem 'rubocop'
   gem 'simplecov'
   gem 'simplecov-console'
-  gem 'coveralls', require: false
 end
 
 group :development do
-  gem 'travis'
-  gem 'travis-lint'
-  gem 'puppet-blacksmith'
   gem 'guard-rake'
-  gem 'pry'
-  gem 'yard'
   gem 'listen', '<3.1'
+  gem 'maintainers'
+  gem 'pry'
+  gem 'puppet-blacksmith'
   gem 'r10k'
   gem 'rubycritic', :require => false
-  gem 'maintainers'
+  gem 'travis'
+  gem 'travis-lint'
+  gem 'yard'
 end
 
 group :acceptance do
   gem 'beaker'
-  gem 'beaker-rspec'
   gem 'beaker-puppet_install_helper'
+  gem 'beaker-rspec'
   gem 'beaker_spec_helper'
 end
