@@ -56,11 +56,16 @@ RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockde
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     apt-get install --no-install-recommends -y git-core && \
+    <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
+
+    <!-- Guess what. We need git for puppet module installs from a repo -->
+    <!--
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
     apt-get remove --purge -y git-core && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
+  -->
 <% elsif os == 'centos' %>
 RUN yum update -y && \
     yum install -y git && \
