@@ -1,6 +1,6 @@
 {
   "name": "autostructure-image_build",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Autostructure",
   "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
