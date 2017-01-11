@@ -1,2 +1,5 @@
+2017-01-11 Release 0.2.2
+- Do not remove git-core
+
 2016-12-02 Release 0.2.0
 - Allow users to skip OS updates and Puppet install
