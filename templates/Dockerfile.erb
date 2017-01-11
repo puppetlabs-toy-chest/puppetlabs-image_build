@@ -62,8 +62,7 @@ RUN yum update -y && \
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
     yum clean all
 <% elsif os == 'alpine' %>
-RUN apt-get update && \
-    apk add --update git && \
+RUN apk add --update git && \
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
     rm -rf /var/cache/apk/*
 <% end %>
