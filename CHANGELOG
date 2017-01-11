@@ -1,3 +1,6 @@
+2017-01-11 Release 0.2.4
+- Keep ca-certificates package
+
 2017-01-11 Release 0.2.3
 - Fix template error
 
