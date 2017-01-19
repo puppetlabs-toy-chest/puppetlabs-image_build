@@ -168,7 +168,8 @@ module PuppetX
         if exists_and_is_file(:factfile)
           @context[:use_factfile] = true
         end
-       end
+      end
+
       def determine_if_using_hiera
         if exists_and_is_file(:hiera_config) && exists_and_is_directory(:hiera_data)
           @context[:use_hiera] = true
