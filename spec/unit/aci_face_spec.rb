@@ -40,7 +40,7 @@ describe Puppet::Face[:aci, '0.1.0'] do
       end
 
       it 'should have a default value for manifest if not passed explicitly' do
-        image_builder = double()
+        image_builder = double
         allow(image_builder).to receive(:build)
         allow(image_builder).to receive_message_chain(:build_file, :render)
         expect(PuppetX::Puppetlabs::AciBuilder).to receive(:new).with('manifests/init.pp', any_args).and_return(image_builder)

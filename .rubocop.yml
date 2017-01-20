@@ -305,7 +305,10 @@ Style/EmptyLiteral:
 Metrics/LineLength:
   Enabled: false
 
-Style/MethodCallParentheses:
+Metrics/BlockLength:
+  Max: 500
+
+Style/MethodCallWithoutArgsParent:
   Enabled: false
 
 Style/MethodDefParentheses:
