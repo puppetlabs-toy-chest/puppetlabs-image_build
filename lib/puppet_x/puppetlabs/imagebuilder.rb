@@ -26,6 +26,7 @@ module PuppetX
         add_label_schema_labels
         env_to_array
         cmd_to_array
+        image_user_to_array
         expose_to_array
         entrypoint_to_array
         determine_os
@@ -144,6 +145,10 @@ module PuppetX
         value_to_array(:cmd)
       end
 
+      def image_user_to_array
+        value_to_array(:image_user)
+      end
+
       def entrypoint_to_array
         value_to_array(:entrypoint)
       end
@@ -177,8 +182,8 @@ module PuppetX
                                  ['/opt/puppetlabs/bin/puppet', '/opt/puppetlabs/puppet/bin/gem', '/opt/puppetlabs/puppet/bin/r10k']
                                end
       end
-      
-      #rubocop:disable Metrics/PerceivedComplexity 
+
+      #rubocop:disable Metrics/PerceivedComplexity
       def determine_environment_vars # rubocop:disable Metrics/AbcSize
         codename = nil
         puppet_version = nil
@@ -193,6 +198,7 @@ module PuppetX
                      when 'precise', /^12\.04/
                        'precise'
                      end
+        when 'centos'
         when 'debian'
           codename = case @context[:os_version]
                      when 'latest', 'jessie', /^8/
@@ -222,7 +228,7 @@ module PuppetX
                            when '1.6.0'
                              '4.6.0'
                            when '1.5.3'
-                             '4.5.3'                           
+                             '4.5.3'
                            when '1.5.2'
                              '4.5.2'
                            when '1.5.1'

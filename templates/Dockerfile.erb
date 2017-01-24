@@ -1,6 +1,8 @@
 <% if from %>FROM <%= from %><% end %>
 <% if maintainer %>MAINTAINER <%= maintainer %><% end %>
 
+USER root
+
 <% if environment %>ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %><% end %>
 
 <% if rocker %>MOUNT /opt/puppetlabs /etc/puppetlabs /root/.gem<% end %>
@@ -21,7 +23,7 @@ RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/ap
     rm puppetlabs-release-pc1-"$CODENAME".deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
-    apt-get remove --purge -y wget && \
+    apt-get remove --purge -y wget ca-certificates && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
@@ -56,7 +58,11 @@ RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockde
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     apt-get install --no-install-recommends -y git-core && \
-    <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc
+    <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
+    apt-get remove --purge -y git-core && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
 RUN yum update -y && \
     yum install -y git && \
@@ -127,6 +133,8 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
 <% end %>
 
 <% if expose && !expose.empty? %>EXPOSE <%= expose.join(' ') %><% end %>
+
+<% if image_user && !image_user.empty? %>USER <%= image_user.join(' ') %><% end %>
 
 <% if entrypoint && !entrypoint.empty? %>ENTRYPOINT <%= entrypoint.to_s %><% end %>
 <% if cmd && !cmd.empty? %>CMD <%= cmd.to_s %><% end %>

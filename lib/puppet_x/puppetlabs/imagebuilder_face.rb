@@ -39,6 +39,10 @@ module PuppetX
         summary 'A list of ports to be exposed by the resulting image'
       end
 
+      option '--image_user STRING' do
+        summary 'The user used to be execut the command in the resulting image'
+      end
+
       option '--cmd STRING' do
         summary 'The default command to be executed by the resulting image'
       end
