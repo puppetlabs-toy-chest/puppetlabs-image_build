@@ -1,3 +1,6 @@
+2017-01-24 Release 0.2.5
+- Dockerfile switches to root user before work
+
 2017-01-11 Release 0.2.4
 - Keep ca-certificates package
 
