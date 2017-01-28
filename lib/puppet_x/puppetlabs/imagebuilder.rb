@@ -182,8 +182,7 @@ module PuppetX
                                  ['/opt/puppetlabs/bin/puppet', '/opt/puppetlabs/puppet/bin/gem', '/opt/puppetlabs/puppet/bin/r10k']
                                end
       end
-
-      #rubocop:disable Metrics/PerceivedComplexity
+      
       def determine_environment_vars # rubocop:disable Metrics/AbcSize
         codename = nil
         puppet_version = nil
