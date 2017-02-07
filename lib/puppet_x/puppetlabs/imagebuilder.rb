@@ -210,9 +210,9 @@ module PuppetX
                      end
         when 'debian'
           codename = case @context[:os_version]
-                     when 'latest', 'jessie', /^8/
+                     when 'latest', 'stable','stable-slim','stable-backports','jessie', 'jessie-slim','jessie-backports', /^8/
                        'jessie'
-                     when 'sid'
+                     when 'sid', 'sid-slim'
                        'sid'
                      when 'wheezy', /^7/
                        'wheezy'
