@@ -18,7 +18,7 @@ RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/ap
     rm puppetlabs-release-pc1-"$CODENAME".deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
-    apt-get remove --purge -y lsb-release wget ca-certificates && \
+    apt-get remove --purge -y wget ca-certificates && \
     apt-get autoremove -y && \
     apt-get clean && \
     mkdir -p /etc/puppetlabs/facter/facts.d/ && \
