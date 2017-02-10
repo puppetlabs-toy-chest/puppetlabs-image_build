@@ -320,8 +320,12 @@ module PuppetX
         @context[:autosign_token].nil? ? '' : "--build-arg AUTOSIGN_TOKEN=#{@context[:autosign_token]}"
       end
 
-      def proxy_string
-        @context[:http_proxy].nil? ? '' : "--build-arg HTTP_PROXY=#{@context[:http_proxy]}"
+      def http_proxy_string
+        @context[:http_proxy].nil? ? '' : "--build-arg http_proxy=#{@context[:http_proxy]}"
+      end
+
+      def https_proxy_string
+        @context[:https_proxy].nil? ? '' : "--build-arg https_proxy=#{@context[:https_proxy]}"
       end
 
       def apt_proxy_string
@@ -331,9 +335,9 @@ module PuppetX
       def build_command
         dockerfile_path = build_file.save.path
         if @context[:rocker]
-          "rocker build #{autosign_string} #{apt_proxy_string} #{proxy_string} #{string_args} -f #{dockerfile_path} ."
+          "rocker build #{autosign_string} #{apt_proxy_string} #{http_proxy_string} #{https_proxy_string} #{string_args} -f #{dockerfile_path} ."
         else
-          "docker build #{autosign_string} #{apt_proxy_string} #{proxy_string} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
+          "docker build #{autosign_string} #{apt_proxy_string} #{http_proxy_string} #{https_proxy_string} #{string_args} -t #{@context[:image_name]} -f #{dockerfile_path} ."
         end
       end
     end
