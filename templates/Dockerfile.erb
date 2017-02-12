@@ -76,6 +76,10 @@ COPY <%= puppetfile %> /Puppetfile
 RUN <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules
 <% end %>
 
+<% if module_path && !master %>
+COPY <%= module_path %> /etc/puppetlabs/code/modules/
+<% end %>
+
 <% if manifest && !master %>
 COPY <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
 <% end %>
