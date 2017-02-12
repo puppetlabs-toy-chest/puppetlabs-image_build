@@ -72,7 +72,7 @@ Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
 # DISABLED
-Lint/Eval:
+Security/Eval:
   Enabled: false
 
 # DISABLED
@@ -307,9 +307,6 @@ Metrics/LineLength:
 
 Metrics/BlockLength:
   Max: 500
-
-Style/MethodCallWithoutArgsParent:
-  Enabled: false
 
 Style/MethodDefParentheses:
   Enabled: false
