@@ -61,7 +61,7 @@ module PuppetX
 
       def validate_context
         unless @context[:master]
-          raise InvalidContextError, "specified file #{@context[:manifest]} does not exist" unless File.file?(@context[:manifest])
+          raise InvalidContextError, "specified file #{@context[:manifest]} does not exist" unless File.exist?(@context[:manifest])
         end
         raise InvalidContextError, 'You must provide an image name, either on the command line or in the metadata file' unless @context[:image_name]
       end
