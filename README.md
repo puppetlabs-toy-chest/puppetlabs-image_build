@@ -188,6 +188,22 @@ additional context for the Puppet build. You can find this in the
 puppet docker build manifests/init.pp --image-name puppet/es --expose 9200 --cmd /docker-entrypoint.sh
 ```
 
+### A note on options with multiple arguments
+
+Several of the arguments to `image_build` can take a list of values.
+This is done by passing in comma separated values. For instance, to
+specify an `ENTRYPOINT` like so:
+
+```
+ENTRYPOINT ["nginx", "-g", "daemon off"]
+```
+
+You can pass the following on the commandline:
+
+```
+--entrypoint nginx,'-g','daemon off'
+```
+
 ### Building multiple images from one manifest
 
 One advantage of using Puppet for building Docker images is you are
