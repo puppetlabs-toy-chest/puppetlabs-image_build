@@ -1,6 +1,8 @@
 <% if from %>FROM <%= from %><% end %>
 <% if maintainer %>MAINTAINER <%= maintainer %><% end %>
 
+<% if image_user && !image_user.empty? %>USER root<% end %>
+
 <% if environment %>ENV <% environment.each do |name, value| %><%= name.upcase %>="<%= value %>" <% end %><% end %>
 
 <% if rocker %>MOUNT /opt/puppetlabs /etc/puppetlabs /root/.gem<% end %>
@@ -137,5 +139,7 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
 
 <% if entrypoint && !entrypoint.empty? %>ENTRYPOINT <%= entrypoint.to_s %><% end %>
 <% if cmd && !cmd.empty? %>CMD <%= cmd.to_s %><% end %>
+
+<% if image_user && !image_user.empty? %>USER <%= image_user.to_s %><% end %>
 
 <% if rocker %>TAG <%= image_name %><% end %>

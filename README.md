@@ -322,6 +322,7 @@ USAGE: puppet docker <action> [--from STRING]
 [--[no-]inventory]
 [--hiera-config STRING]
 [--hiera-data STRING]
+[--image-user STRING]
 [--puppetfile STRING]
 [--image-name STRING]
 [--config-file STRING]
@@ -347,6 +348,8 @@ OPTIONS:
   --hiera-config STRING          - Hiera config file to use
   --hiera-data STRING            - Hieradata directory to use
   --image-name STRING            - The name of the resulting image
+  --image-user STRING            - Specify a user to be used to run the
+                                   container process
   --[no-]inventory               - Enable or disable the generation of an
                                    inventory file at /inventory.json
   --labels KEY=VALUE             - A set of labels to be applied to the
