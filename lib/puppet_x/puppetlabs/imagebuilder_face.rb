@@ -46,6 +46,10 @@ module PuppetX
         summary 'The default entrypoint for the resulting image'
       end
 
+      option '--image-user STRING' do
+        summary 'Specify a user to be used to run the container process'
+      end
+
       option '--labels KEY=VALUE' do
         summary 'A set of labels to be applied to the resulting image'
       end

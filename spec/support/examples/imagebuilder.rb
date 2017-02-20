@@ -20,6 +20,9 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       it 'the original from value' do
         expect(context).to include(from: args[:from])
       end
+      it 'no user set' do
+        expect(context[:image_user]).to be_nil
+      end
       it 'the original image_name value' do
         expect(context).to include(image_name: args[:image_name])
       end
@@ -48,6 +51,20 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
     end
     it 'should by include some label-schema labels' do
       expect(context[:labels]).to include('org.label-schema.schema-version=1.0')
+    end
+  end
+
+  context 'with a user set' do
+    let(:user) { 'diane' }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        image_user: user,
+      }
+    end
+    it 'should by include some label-schema labels' do
+      expect(context[:image_user]).to eq(user)
     end
   end
 
