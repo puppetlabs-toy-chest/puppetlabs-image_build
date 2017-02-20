@@ -111,7 +111,8 @@ RUN apk update && \
   <% else %>
     <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
-    FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management && \
+    FACTER_hostname=<%= hostname %> <%= puppet_path %> apply <%= manifest %> --detailed-exitcodes --verbose --show_diff --summarize <% if use_hiera %>--hiera_config=/hiera.yaml<% end %> --app_management ; \
+    rc=$?; if [ $rc -ne 0 ] && [ $rc -ne 2 ]; then exit 1; fi && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
