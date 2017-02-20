@@ -8,6 +8,7 @@ group :test do
   gem 'rake'
   gem 'rspec'
   gem 'rubocop'
+  gem 'rubocop-rspec'
   gem 'simplecov'
   gem 'simplecov-console'
 end
@@ -26,7 +27,7 @@ group :development do
 end
 
 group :acceptance do
-  gem 'beaker'
+  gem 'beaker', '~> 2.0'
   gem 'beaker-puppet_install_helper'
   gem 'beaker-rspec'
   gem 'beaker_spec_helper'

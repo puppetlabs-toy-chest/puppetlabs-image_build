@@ -80,6 +80,10 @@ acbuild run -- rm -rf /var/cache/apk/*
 acbuild --debug copy <%= puppetfile %> /Puppetfile
 <% end %>
 
+<% if module_path && !master %>
+acbuild --debug copy <%= module_path %> /etc/puppetlabs/code/modules/
+<% end %>
+
 <% if manifest && !master %>
 acbuild --debug copy <%= File.dirname(manifest) %> /<%= File.dirname(manifest) %>
 <% end %>

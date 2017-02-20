@@ -313,6 +313,7 @@ USAGE: puppet docker <action> [--from STRING]
 [--os-version STRING]
 [--puppet-agent-version STRING]
 [--r10k-version STRING]
+[--module-path PATH]
 [--expose STRING]
 [--cmd STRING]
 [--entrypoint STRING]
@@ -353,6 +354,8 @@ OPTIONS:
   --maintainer STRING            - Name and email address for the maintainer of
                                    the resulting image
   --master STRING                - A Puppet Master to use for building images
+  --module-path PATH             - A path to a directory containing a set of
+                                   modules to be copied into the image
   --os STRING                    - The operating system used by the image if not
                                    autodetected
   --os-version STRING            - The version of the operating system used by

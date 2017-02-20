@@ -1,4 +1,4 @@
-shared_examples 'an image builder' do
+shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
   context 'without any arguments' do
     let(:args) { {} }
     it 'should raise an error about missing operating system details' do
@@ -354,6 +354,23 @@ entrypoint:
     end
     it 'should produce a context which enables the hiera options' do
       expect(context).to include(use_hiera: true)
+    end
+  end
+
+  context 'with a module path provided' do
+    let(:module_path) { '/example/directory' }
+    let(:args) do
+      {
+        from: 'alpine:3.4',
+        image_name: image_name,
+        module_path: module_path,
+      }
+    end
+    it 'should not raise an error' do
+      expect { context }.not_to raise_error
+    end
+    it 'should produce a context with a module path' do
+      expect(context).to include(module_path: module_path)
     end
   end
 
