@@ -8,6 +8,11 @@ module PuppetX
         default_to { 'ubuntu:16.04' }
       end
 
+      option '--skip-update' do
+        summary 'Skip the updates Puppet does for the respective OS'
+        default_to { false }
+      end
+
       option '--maintainer STRING' do
         summary 'Name and email address for the maintainer of the resulting image'
       end
@@ -36,6 +41,10 @@ module PuppetX
 
       option '--expose STRING' do
         summary 'A list of ports to be exposed by the resulting image'
+      end
+
+      option '--image_user STRING' do
+        summary 'The user used to be execut the command in the resulting image'
       end
 
       option '--cmd STRING' do

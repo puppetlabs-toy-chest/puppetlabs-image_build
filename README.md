@@ -388,3 +388,4 @@ images, so if you're using Centos 6 then you need to pass the
 ## Maintainers
 
 This repository is maintained by: Gareth Rushgrove <gareth@puppet.com>.
+The forked Autostructure repository is maintained by: Bryan Belanger <bryan@autostructure.io>

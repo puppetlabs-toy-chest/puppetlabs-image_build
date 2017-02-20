@@ -1,14 +1,14 @@
 {
-  "name": "puppetlabs-image_build",
-  "version": "0.1.2",
-  "author": "Puppet",
+  "name": "autostructure-image_build",
+  "version": "0.2.9",
+  "author": "Autostructure",
   "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
-  "source": "https://github.com/puppetlabs/puppetlabs-image_build.git",
-  "project_page": "https://github.com/puppetlabs/puppetlabs-image_build",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-image_build/issues",
+  "source": "https://github.com/autostructure/puppetlabs-image_build.git",
+  "project_page": "https://github.com/autostructure/puppetlabs-image_build",
+  "issues_url": "https://github.com/autostructure/puppetlabs-image_build/issues",
   "dependencies": [
-  
+
   ],
   "data_provider": null
 }

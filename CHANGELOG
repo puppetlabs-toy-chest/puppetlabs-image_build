@@ -1,0 +1,14 @@
+2017-01-24 Release 0.2.5
+- Dockerfile switches to root user before work
+
+2017-01-11 Release 0.2.4
+- Keep ca-certificates package
+
+2017-01-11 Release 0.2.3
+- Fix template error
+
+2017-01-11 Release 0.2.2
+- Do not remove git-core
+
+2016-12-02 Release 0.2.0
+- Allow users to skip OS updates and Puppet install
