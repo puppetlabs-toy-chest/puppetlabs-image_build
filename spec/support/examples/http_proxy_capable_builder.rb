@@ -7,7 +7,7 @@ shared_examples 'a builder capable of utilising an HTTP proxy' do
       }
     end
     it 'should not pass a proxy as a build argument' do
-      expect(builder.send(:build_command)).not_to include("--build-arg HTTP_PROXY=")
+      expect(builder.send(:build_command)).not_to include("--build-arg http_proxy=")
     end
   end
 
@@ -21,7 +21,7 @@ shared_examples 'a builder capable of utilising an HTTP proxy' do
       }
     end
     it 'should pass the proxy as a build argument' do
-      expect(builder.send(:build_command)).to include("--build-arg HTTP_PROXY=#{proxy}")
+      expect(builder.send(:build_command)).to include("--build-arg http_proxy=#{proxy}")
     end
   end
 end
