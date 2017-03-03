@@ -216,8 +216,8 @@ labels:
         volume: '/var/www',
       }
     end
-    it 'should expand the port to an array' do
-      expect(context).to include(expose: ['/var/www'])
+    it 'should expand the volume to an array' do
+      expect(context).to include(volume: ['/var/www'])
     end
   end
 
@@ -229,8 +229,8 @@ labels:
         volume: '/var/www,/var/lib',
       }
     end
-    it 'should expand the labels to an array' do
-      expect(context[:expose]).to include('/var/www','/var/lib')
+    it 'should expand the volume to an array' do
+      expect(context[:volume]).to include('/var/www','/var/lib')
     end
   end
 
