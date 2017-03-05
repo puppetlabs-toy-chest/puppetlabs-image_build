@@ -27,6 +27,7 @@ module PuppetX
         env_to_array
         cmd_to_array
         expose_to_array
+        volume_to_array
         entrypoint_to_array
         determine_os
         determine_paths
@@ -146,6 +147,10 @@ module PuppetX
         value_to_array(:expose)
       end
 
+      def volume_to_array
+        value_to_array(:volume)
+      end
+
       def cmd_to_array
         value_to_array(:cmd)
       end
@@ -192,8 +197,8 @@ module PuppetX
                                  ['/opt/puppetlabs/bin/puppet', '/opt/puppetlabs/puppet/bin/gem', '/opt/puppetlabs/puppet/bin/r10k']
                                end
       end
-      
-      #rubocop:disable Metrics/PerceivedComplexity 
+
+      #rubocop:disable Metrics/PerceivedComplexity
       def determine_environment_vars # rubocop:disable Metrics/AbcSize
         codename = nil
         puppet_version = nil
@@ -237,7 +242,7 @@ module PuppetX
                            when '1.6.0'
                              '4.6.0'
                            when '1.5.3'
-                             '4.5.3'                           
+                             '4.5.3'
                            when '1.5.2'
                              '4.5.2'
                            when '1.5.1'

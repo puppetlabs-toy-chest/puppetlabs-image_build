@@ -136,6 +136,7 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
 <% end %>
 
 <% if expose && !expose.empty? %>EXPOSE <%= expose.join(' ') %><% end %>
+<% if volume && !volume.empty? %>VOLUME <%= volume.join(' ') %><% end %>
 
 <% if entrypoint && !entrypoint.empty? %>ENTRYPOINT <%= entrypoint.to_s %><% end %>
 <% if cmd && !cmd.empty? %>CMD <%= cmd.to_s %><% end %>

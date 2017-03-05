@@ -208,6 +208,32 @@ labels:
     end
   end
 
+  context 'with a single volume specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        volume: '/var/www',
+      }
+    end
+    it 'should expand the volume to an array' do
+      expect(context).to include(volume: ['/var/www'])
+    end
+  end
+
+  context 'with multiple volume specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        volume: '/var/www,/var/lib',
+      }
+    end
+    it 'should expand the volume to an array' do
+      expect(context[:volume]).to include('/var/www','/var/lib')
+    end
+  end
+
   context 'with multiple label specified in a config file' do
     let(:configfile) do
       file = Tempfile.new('metadata.yaml')
