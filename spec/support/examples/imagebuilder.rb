@@ -574,4 +574,16 @@ invalid
       end
     end
   end
+
+  context "when using a centos image" do
+    let(:args) do
+      {
+        from: "centos:7",
+        image_name: image_name,
+      }
+    end
+    it 'should not raise an error' do
+      expect { context }.not_to raise_error
+    end
+  end
 end

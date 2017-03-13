@@ -258,6 +258,7 @@ module PuppetX
                            else
                              '4.5.2'
                            end
+        when 'centos' # rubocop:disable Lint/EmptyWhen
         else
           raise InvalidContextError, 'puppet docker currently only supports Ubuntu, Debian, Alpine and Centos base images'
         end
