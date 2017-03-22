@@ -1,3 +1,15 @@
+##2017-03-22 - Version 0.3.0
+
+This release includes some minor features and several bug fixes,
+including:
+
+* Adds the ability to specify a list of volumes for the image
+* Fix a bug which meant building Centos images didn't work as expected
+
+Thanks to community member @luckyraul for the volumes addition, and to
+@aaron-grewell for reporting and testing the fix for the Centos issue.
+
+
 ##2017-02-21 - Version 0.2.0
 
 This release includes some minor features and several bug fixes,
