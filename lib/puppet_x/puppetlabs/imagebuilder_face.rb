@@ -109,6 +109,11 @@ module PuppetX
         summary 'Add label-schema compatible labels'
         default_to { false }
       end
+
+      option '--facter_vars KEY=VALUE' do
+        summary 'Set of variables to add to facter.'
+      end
+
     end
   end
 end
