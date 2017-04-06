@@ -333,6 +333,7 @@ USAGE: puppet docker <action> [--from STRING]
 [--expose STRING]
 [--cmd STRING]
 [--entrypoint STRING]
+[--facter_vars KEY=VALUE]
 [--labels KEY=VALUE]
 [--rocker]
 [--[no-]inventory]
@@ -357,6 +358,12 @@ OPTIONS:
   --config-file STRING           - A configuration file with all the metadata
   --entrypoint STRING            - The default entrypoint for the resulting
                                    image
+  --facter_vars KEY=VALUE        - A set of comma-separated KEY=VALUE pairs
+                                   that should be passed to puppet as facter
+                                   variables whilst running `puppet  apply`.
+                                   The KEY will usually be passed in upper
+                                   case since puppet expects facter variables
+                                   in upper case.
   --expose STRING                - A list of ports to be exposed by the
                                    resulting image
   --from STRING                  - The base docker image to use for the

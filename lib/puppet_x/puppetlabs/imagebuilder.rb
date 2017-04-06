@@ -29,6 +29,7 @@ module PuppetX
         expose_to_array
         volume_to_array
         entrypoint_to_array
+        facter_vars_to_array
         determine_os
         determine_paths
         determine_if_using_puppetfile
@@ -127,6 +128,10 @@ module PuppetX
 
       def labels_to_array
         value_to_array(:labels)
+      end
+
+      def facter_vars_to_array
+        value_to_array(:facter_vars)
       end
 
       def add_label_schema_labels

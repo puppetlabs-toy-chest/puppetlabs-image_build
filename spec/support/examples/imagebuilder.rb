@@ -97,6 +97,20 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
     end
   end
 
+  context 'with a single facter variable specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        facter_vars: 'KEY=value',
+      }
+    end
+    it 'should expand the facter_vars to an array' do
+      expect(context[:facter_vars]).to include('KEY=value')
+    end
+  end
+
+
   context 'with a master specified' do
     let(:master) { 'puppet.example.com' }
     let(:args) do
