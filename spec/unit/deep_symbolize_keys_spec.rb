@@ -7,7 +7,7 @@ describe 'deep_symbolize_keys' do
       expect(subject.respond_to?(:deep_symbolize_keys))
     end
     it 'should have symbols for keys after deep_symbolize_keys is called' do
-      expect({'a' => 1}.deep_symbolize_keys).to eq({a: 1})
+      expect({ 'a' => 1 }.deep_symbolize_keys).to eq(a: 1)
     end
   end
 
@@ -16,7 +16,7 @@ describe 'deep_symbolize_keys' do
       expect(subject.respond_to?(:deep_symbolize_keys))
     end
     it 'should have symbols for keys after deep_symbolize_keys is called' do
-      expect([{'a' => 1}].deep_symbolize_keys).to eq([{a: 1}])
+      expect([{ 'a' => 1 }].deep_symbolize_keys).to eq([{ a: 1 }])
     end
   end
 end

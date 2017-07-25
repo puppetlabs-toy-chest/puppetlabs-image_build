@@ -42,5 +42,5 @@ task test: [
   :syntax,
   :rubocop,
   :metadata_lint,
-  :spec,
+  :spec
 ]

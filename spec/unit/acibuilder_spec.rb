@@ -14,7 +14,7 @@ describe PuppetX::Puppetlabs::AciBuilder do
     let(:args) do
       {
         from: from,
-        image_name: image_name,
+        image_name: image_name
       }
     end
 

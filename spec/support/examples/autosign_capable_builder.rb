@@ -3,11 +3,11 @@ shared_examples 'an autosign capable builder' do
     let(:args) do
       {
         from: from,
-        image_name: image_name,
+        image_name: image_name
       }
     end
     it 'should not pass an autosign token build argument' do
-      expect(builder.send(:build_command)).not_to include("--build-arg AUTOSIGN_TOKEN=")
+      expect(builder.send(:build_command)).not_to include('--build-arg AUTOSIGN_TOKEN=')
     end
   end
 
@@ -17,7 +17,7 @@ shared_examples 'an autosign capable builder' do
       {
         from: from,
         image_name: image_name,
-        autosign_token: token,
+        autosign_token: token
       }
     end
     it 'should pass the token as a build argument' do

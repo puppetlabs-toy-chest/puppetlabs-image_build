@@ -20,9 +20,9 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:aci, '0.1.0') do
         builder = PuppetX::Puppetlabs::AciBuilder.new(manifest, args)
         builder.build
       rescue PuppetX::Puppetlabs::BuildError => e
-        fail "An error occured and the build process was interupted: #{e.message}"
+        raise "An error occured and the build process was interupted: #{e.message}"
       rescue PuppetX::Puppetlabs::InvalidContextError => e
-        fail e.message
+        raise e.message
       end
     end
   end
@@ -37,7 +37,7 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:aci, '0.1.0') do
         builder = PuppetX::Puppetlabs::AciBuilder.new(manifest, args)
         builder.build_file.render
       rescue PuppetX::Puppetlabs::InvalidContextError => e
-        fail e.message
+        raise e.message
       end
     end
   end

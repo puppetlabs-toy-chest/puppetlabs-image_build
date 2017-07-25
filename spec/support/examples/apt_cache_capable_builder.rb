@@ -3,11 +3,11 @@ shared_examples 'a builder capable of utilising an APT cache' do
     let(:args) do
       {
         from: from,
-        image_name: image_name,
+        image_name: image_name
       }
     end
     it 'should not pass a proxy as a build argument' do
-      expect(builder.send(:build_command)).not_to include("--build-arg APT_PROXY=")
+      expect(builder.send(:build_command)).not_to include('--build-arg APT_PROXY=')
     end
   end
 
@@ -17,7 +17,7 @@ shared_examples 'a builder capable of utilising an APT cache' do
       {
         from: from,
         image_name: image_name,
-        apt_proxy: proxy,
+        apt_proxy: proxy
       }
     end
     it 'should pass the proxy as a build argument' do

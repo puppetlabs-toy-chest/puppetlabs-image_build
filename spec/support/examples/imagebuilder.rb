@@ -1,8 +1,8 @@
-shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
+shared_examples 'an image builder' do
   context 'without any arguments' do
     let(:args) { {} }
     it 'should raise an error about missing operating system details' do
-      expect { builder.context }.to raise_exception(PuppetX::Puppetlabs::InvalidContextError, /currently only supports/)
+      expect { builder.context }.to raise_exception(PuppetX::Puppetlabs::InvalidContextError, %r{currently only supports})
     end
   end
 
@@ -10,7 +10,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
     let(:args) do
       {
         from: from,
-        image_name: image_name,
+        image_name: image_name
       }
     end
     it 'should not raise an error' do
@@ -46,7 +46,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        label_schema: true,
+        label_schema: true
       }
     end
     it 'should by include some label-schema labels' do
@@ -60,7 +60,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        image_user: user,
+        image_user: user
       }
     end
     it 'should by include some label-schema labels' do
@@ -73,7 +73,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        env: 'KEY=value',
+        env: 'KEY=value'
       }
     end
     it 'should expand the env to an array' do
@@ -89,7 +89,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        labels: 'KEY=value',
+        labels: 'KEY=value'
       }
     end
     it 'should expand the labels to an array' do
@@ -103,7 +103,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        master: master,
+        master: master
       }
     end
     it 'should set master host' do
@@ -121,7 +121,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        master: "#{master}:#{port}",
+        master: "#{master}:#{port}"
       }
     end
     it 'should set master host' do
@@ -138,7 +138,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        master: master,
+        master: master
       }
     end
     it 'should set master host' do
@@ -154,7 +154,7 @@ shared_examples 'an image builder' do #rubocop:disable Metrics/BlockLength
       {
         from: from,
         image_name: image_name,
-        labels: 'KEY=value,KEY2=value2',
+        labels: 'KEY=value,KEY2=value2'
       }
     end
     it 'should expand the labels to an array' do
@@ -187,7 +187,7 @@ labels:
       {
         from: from,
         image_name: image_name,
-        expose: 80,
+        expose: 80
       }
     end
     it 'should expand the port to an array' do
@@ -200,11 +200,11 @@ labels:
       {
         from: from,
         image_name: image_name,
-        expose: '90,91',
+        expose: '90,91'
       }
     end
     it 'should expand the labels to an array' do
-      expect(context[:expose]).to include('90','91')
+      expect(context[:expose]).to include('90', '91')
     end
   end
 
@@ -213,7 +213,7 @@ labels:
       {
         from: from,
         image_name: image_name,
-        volume: '/var/www',
+        volume: '/var/www'
       }
     end
     it 'should expand the volume to an array' do
@@ -226,11 +226,11 @@ labels:
       {
         from: from,
         image_name: image_name,
-        volume: '/var/www,/var/lib',
+        volume: '/var/www,/var/lib'
       }
     end
     it 'should expand the volume to an array' do
-      expect(context[:volume]).to include('/var/www','/var/lib')
+      expect(context[:volume]).to include('/var/www', '/var/lib')
     end
   end
 
@@ -250,7 +250,7 @@ expose:
     end
     let(:args) { { config_file: configfile.path } }
     it 'should expand the ports to an array' do
-      expect(context[:expose]).to include(92,93)
+      expect(context[:expose]).to include(92, 93)
     end
   end
 
@@ -259,7 +259,7 @@ expose:
       {
         from: from,
         image_name: image_name,
-        cmd: 'nginx',
+        cmd: 'nginx'
       }
     end
     it 'should expand the cmd to an array' do
@@ -272,7 +272,7 @@ expose:
       {
         from: from,
         image_name: image_name,
-        cmd: 'nginx,run',
+        cmd: 'nginx,run'
       }
     end
     it 'should expand the labels to an array' do
@@ -305,7 +305,7 @@ cmd:
       {
         from: from,
         image_name: image_name,
-        entrypoint: 'bash',
+        entrypoint: 'bash'
       }
     end
     it 'should expand the entrypoint to an array' do
@@ -318,7 +318,7 @@ cmd:
       {
         from: from,
         image_name: image_name,
-        entrypoint: 'bash,-x',
+        entrypoint: 'bash,-x'
       }
     end
     it 'should expand the entrypoints to an array' do
@@ -346,14 +346,13 @@ entrypoint:
     end
   end
 
-
   context 'with a Puppetfile provided' do
     let(:puppetfile) { Tempfile.new('Puppetfile') }
     let(:args) do
       {
         from: from,
         image_name: image_name,
-        puppetfile: puppetfile.path,
+        puppetfile: puppetfile.path
       }
     end
     it 'should not raise an error' do
@@ -370,7 +369,7 @@ entrypoint:
       {
         from: from,
         image_name: image_name,
-        puppetfile: puppetfile.path,
+        puppetfile: puppetfile.path
       }
     end
     it 'should not raise an error' do
@@ -389,7 +388,7 @@ entrypoint:
         from: from,
         image_name: image_name,
         hiera_config: hieraconfig.path,
-        hiera_data: hieradata,
+        hiera_data: hieradata
       }
     end
     it 'should not raise an error' do
@@ -406,7 +405,7 @@ entrypoint:
       {
         from: 'alpine:3.4',
         image_name: image_name,
-        module_path: module_path,
+        module_path: module_path
       }
     end
     it 'should not raise an error' do
@@ -421,7 +420,7 @@ entrypoint:
     let(:args) do
       {
         from: 'alpine:3.4',
-        image_name: image_name,
+        image_name: image_name
       }
     end
     context 'should produce a context with' do
@@ -463,7 +462,7 @@ image_name: #{image_name}
       let(:args) do
         {
           config_file: configfile.path,
-          image_name: new_image_name,
+          image_name: new_image_name
         }
       end
       it 'hould use the value from the file' do
@@ -475,7 +474,7 @@ image_name: #{image_name}
   context 'with a config file in a directory' do
     let(:configdir) do
       dir = Dir.mktmpdir('metadata')
-      file = File.new("#{dir}/metadata.yaml", "w")
+      file = File.new("#{dir}/metadata.yaml", 'w')
       file.write <<-EOF
 ---
 from: #{from}
@@ -498,14 +497,14 @@ image_name: #{image_name}
   context 'with a host override config file in a directory' do
     let(:configdir) do
       dir = Dir.mktmpdir('metadata')
-      file = File.new("#{dir}/metadata.yaml", "w")
+      file = File.new("#{dir}/metadata.yaml", 'w')
       file.write <<-EOF
 ---
 from: #{from}
 expose: 80
       EOF
       file.close
-      file = File.new("#{dir}/sample.yaml", "w")
+      file = File.new("#{dir}/sample.yaml", 'w')
       file.write <<-EOF
 ---
 expose: 90
@@ -517,7 +516,7 @@ expose: 90
       {
         config_directory: configdir,
         config_file: 'metadata.yaml',
-        image_name: image_name,
+        image_name: image_name
       }
     end
     it 'should determine the correct from value from the config file' do
@@ -544,7 +543,7 @@ invalid
       }
     end
     it 'should raise a suitable error' do
-      expect { context }.to raise_exception(PuppetX::Puppetlabs::InvalidContextError, /valid YAML/)
+      expect { context }.to raise_exception(PuppetX::Puppetlabs::InvalidContextError, %r{valid YAML})
     end
   end
 
@@ -552,11 +551,11 @@ invalid
     ubuntu: {
       '16.04' => 'xenial',
       '14.04' => 'trusty',
-      '12.04' => 'precise',
+      '12.04' => 'precise'
     },
     debian: {
       '8' => 'jessie',
-      '7' => 'wheezy',
+      '7' => 'wheezy'
     }
   }
   os_codenames.each do |os, hash|
@@ -565,7 +564,7 @@ invalid
         let(:args) do
           {
             from: "#{os}:#{version}",
-            image_name: image_name,
+            image_name: image_name
           }
         end
         it "the codename should be #{codename}" do
@@ -575,11 +574,11 @@ invalid
     end
   end
 
-  context "when using a centos image" do
+  context 'when using a centos image' do
     let(:args) do
       {
-        from: "centos:7",
-        image_name: image_name,
+        from: 'centos:7',
+        image_name: image_name
       }
     end
     it 'should not raise an error' do

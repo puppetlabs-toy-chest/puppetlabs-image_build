@@ -3,14 +3,14 @@ shared_examples 'a builder capable of utilising an HTTP proxy' do
     let(:args) do
       {
         from: from,
-        image_name: image_name,
+        image_name: image_name
       }
     end
     it 'should not pass a proxy as a build argument' do
-      expect(builder.send(:build_command)).not_to include("--build-arg http_proxy=")
+      expect(builder.send(:build_command)).not_to include('--build-arg http_proxy=')
     end
     it 'should not pass an https proxy as a build argument' do
-      expect(builder.send(:build_command)).not_to include("--build-arg https_proxy=")
+      expect(builder.send(:build_command)).not_to include('--build-arg https_proxy=')
     end
   end
 
@@ -22,7 +22,7 @@ shared_examples 'a builder capable of utilising an HTTP proxy' do
         from: from,
         image_name: image_name,
         http_proxy: http,
-        https_proxy: https,
+        https_proxy: https
       }
     end
     it 'should pass the proxy as a build argument' do

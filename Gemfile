@@ -20,7 +20,7 @@ group :development do
   gem 'pry'
   gem 'puppet-blacksmith'
   gem 'r10k'
-  gem 'rubycritic', :require => false
+  gem 'rubycritic', require: false
   gem 'travis'
   gem 'travis-lint'
   gem 'yard'
