@@ -1,4 +1,12 @@
+##2017-07-25 - Version 0.5.0
+
+Adding a couple of user requested features, specifically the ability to
+disable the diff output, and also the ability to enable full debug
+output from the Puppet process run inside the container during build
+
+
 ##2017-07-25 - Version 0.4.0
+
 
 This release adds support for using the Puppet 5 repositories, and
 switches the default Puppet used to build images to Puppet 5.
