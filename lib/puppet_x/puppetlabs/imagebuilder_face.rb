@@ -114,6 +114,11 @@ module PuppetX
         summary 'Add label-schema compatible labels'
         default_to { false }
       end
+
+      option '--puppet-debug' do
+        summary 'Pass the debug flag to the Puppet process used to build the container image'
+        default_to { false }
+      end
     end
   end
 end

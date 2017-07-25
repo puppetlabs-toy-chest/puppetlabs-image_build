@@ -381,11 +381,17 @@ OPTIONS:
                                    the image if not autodetected
   --puppet-agent-version STRING  - Version of the Puppet Agent package to
                                    install
+  --puppet-debug                 - Pass the debug flag to the Puppet process
+                                   used to build the container image
   --puppetfile STRING            - Enable use of Puppetfile to install
                                    dependencies during build
   --r10k-version STRING          - Version of R10k to use for installing modules
                                    from Puppetfile
   --rocker                       - Use Rocker as the build tool
+  --[no-]show-diff               - Enable or disable showing the diff when
+                                   running Puppet to build the image
+  --volume STRING                - A list of volumes to be added to the
+                                   resulting image
 
 ACTIONS:
   build         Build a Docker image from Puppet code
