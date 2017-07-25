@@ -35,6 +35,7 @@ module PuppetX
         determine_if_using_factfile
         determine_if_using_hiera
         determine_environment_vars
+        determine_repository_details
         determine_hostname
         determine_master_host_and_port
         determine_if_master_is_ip
@@ -267,6 +268,30 @@ module PuppetX
             @context[:environment][name] = value
           end
         end
+      end
+
+      def determine_repository_details
+        puppet5 = @context[:puppet_agent_version].to_f >= 5 ? true : false
+        @context[:package_address], @context[:package_name] = case @context[:os]
+                                                              when 'ubuntu', 'debian'
+                                                                if puppet5
+                                                                  [
+                                                                    'https://apt.puppetlabs.com/puppet5-release-"$CODENAME".deb',
+                                                                    'puppet5-release-"$CODENAME".deb'
+                                                                  ]
+                                                                else
+                                                                  [
+                                                                    'https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb',
+                                                                    'puppetlabs-release-pc1-"$CODENAME".deb'
+                                                                  ]
+                                                                end
+                                                              when 'centos'
+                                                                if puppet5
+                                                                  "https://yum.puppetlabs.com/puppet5/puppet5-release-el-#{@context[:os_version]}.noarch.rpm"
+                                                                else
+                                                                  "https://yum.puppetlabs.com/puppetlabs-release-pc1-el-#{@context[:os_version]}.noarch.rpm"
+                                                                end
+                                                              end
       end
 
       def determine_hostname

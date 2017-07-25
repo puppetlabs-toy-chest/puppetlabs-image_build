@@ -34,15 +34,15 @@ acbuild --debug label add <%= name %> "<%= value %>"
 <% if os == 'ubuntu' or os == 'debian' %>
 acbuild --debug run -- apt-get update
 acbuild --debug run -- apt-get install -y lsb-release wget
-acbuild --debug run -- wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb
-acbuild --debug run -- dpkg -i puppetlabs-release-pc1-"$CODENAME".deb
+acbuild --debug run -- wget <%= packagr_address %>
+acbuild --debug run -- dpkg -i <%= package_name %>
 acbuild --debug run -- rm puppetlabs-release-pc1-"$CODENAME".deb
 acbuild --debug run -- apt-get update
 acbuild --debug run -- apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME"
 acbuild --debug run -- apt-get clean
 acbuild --debug run -- rm -rf /var/lib/apt/lists/*
 <% elsif os == 'centos' %>
-acbuild run -- rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+acbuild run -- rpm -Uvh <%= package_address %>
 acbuild run -- yum upgrade -y
 acbuild run -- yum update -y
 acbuild run -- yum install -y puppet-agent-"$PUPPET_AGENT_VERSION"

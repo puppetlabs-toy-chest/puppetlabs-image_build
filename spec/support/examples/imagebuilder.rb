@@ -97,6 +97,45 @@ shared_examples 'an image builder' do
     end
   end
 
+  context 'with a version greater than 5 specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        puppet_agent_version: 5
+      }
+    end
+    it 'should use the correct package URL' do
+      expect(context[:package_address]).to eq('https://apt.puppetlabs.com/puppet5-release-"$CODENAME".deb')
+    end
+  end
+
+  context 'with a version less than 5 specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        puppet_agent_version: '1.10.5'
+      }
+    end
+    it 'should use the correct package URL' do
+      expect(context[:package_address]).to eq('https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb')
+    end
+  end
+
+  context 'with a version less than 5 specified for a centos image' do
+    let(:args) do
+      {
+        from: 'centos:7',
+        image_name: image_name,
+        puppet_agent_version: '1.10.5'
+      }
+    end
+    it 'should use the correct package URL' do
+      expect(context[:package_address]).to eq('https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm')
+    end
+  end
+
   context 'with a master specified' do
     let(:master) { 'puppet.example.com' }
     let(:args) do

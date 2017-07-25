@@ -15,9 +15,9 @@
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
     apt-get install --no-install-recommends -y lsb-release wget ca-certificates && \
-    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-"$CODENAME".deb && \
-    dpkg -i puppetlabs-release-pc1-"$CODENAME".deb && \
-    rm puppetlabs-release-pc1-"$CODENAME".deb && \
+    wget <%= package_address %> && \
+    dpkg -i <%= package_name %> && \
+    rm <%= package_name %> && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
     apt-get remove --purge -y wget && \
@@ -26,7 +26,7 @@ RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/ap
     mkdir -p /etc/puppetlabs/facter/facts.d/ && \
     rm -rf /var/lib/apt/lists/* <% if apt_proxy %>&& rm -f /etc/apt/apt.conf.d/01proxy<% end %>
 <% elsif os == 'centos' %>
-RUN rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-<%= os_version %>.noarch.rpm && \
+RUN rpm -Uvh <%= package_address %> && \
     yum upgrade -y && \
     yum update -y && \
     yum install -y puppet-agent-"$PUPPET_AGENT_VERSION" && \
