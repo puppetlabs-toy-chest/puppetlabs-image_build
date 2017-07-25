@@ -1,3 +1,9 @@
+##2017-07-25 - Version 0.4.0
+
+This release adds support for using the Puppet 5 repositories, and
+switches the default Puppet used to build images to Puppet 5.
+
+
 ##2017-03-22 - Version 0.3.0
 
 This release includes some minor features and several bug fixes,
