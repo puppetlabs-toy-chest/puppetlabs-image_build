@@ -67,6 +67,11 @@ module PuppetX
         default_to { true }
       end
 
+      option '--[no-]show-diff' do
+        summary 'Enable or disable showing the diff when running Puppet to build the image'
+        default_to { true }
+      end
+
       option '--hiera-config STRING' do
         summary 'Hiera config file to use'
         default_to { 'hiera.yaml' }

@@ -14,6 +14,7 @@ describe Puppet::Face[:docker, '0.1.0'] do
 
   {
     inventory: true,
+    show_diff: true,
     rocker: false,
     label_schema: false,
     hiera_config: 'hiera.yaml',

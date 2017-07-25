@@ -14,6 +14,7 @@ describe Puppet::Face[:aci, '0.1.0'] do
 
   {
     inventory: true,
+    show_diff: true,
     hiera_config: 'hiera.yaml',
     hiera_data: 'hieradata',
     puppetfile: 'Puppetfile',
