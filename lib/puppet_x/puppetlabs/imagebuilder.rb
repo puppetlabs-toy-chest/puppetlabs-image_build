@@ -2,6 +2,7 @@ require 'pty'
 require 'yaml'
 require 'resolv'
 require 'date'
+require 'English'
 
 require 'puppet_x/puppetlabs/deep_symbolize_keys'
 require 'puppet_x/puppetlabs/dockerfile'
@@ -48,12 +49,21 @@ module PuppetX
 
       private
 
+      def pty(cmd, &block)
+        PTY.spawn(cmd, &block)
+        $CHILD_STATUS
+      end
+
       def run(command)
-        PTY.spawn(command) do |stdout, _stdin, _pid|
+        status = pty(command) do |stdout, _stdin, pid|
           begin
             stdout.each { |line| print line }
           rescue Errno::EIO # rubocop:disable Lint/HandleExceptions
           end
+          Process.wait(pid)
+        end
+        unless status.nil? || status.success?
+          raise BuildError, 'The docker build process exited with a non-zero status code'
         end
       rescue PTY::ChildExited => e
         raise BuildError, e.message
