@@ -375,6 +375,8 @@ OPTIONS:
   --master STRING                - A Puppet Master to use for building images
   --module-path PATH             - A path to a directory containing a set of
                                    modules to be copied into the image
+  --network STRING               - The Docker network to pass along to the
+                                   docker build command
   --os STRING                    - The operating system used by the image if not
                                    autodetected
   --os-version STRING            - The version of the operating system used by

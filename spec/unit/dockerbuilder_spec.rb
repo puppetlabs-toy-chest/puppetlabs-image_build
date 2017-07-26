@@ -58,6 +58,20 @@ describe PuppetX::Puppetlabs::DockerBuilder do
     end
   end
 
+  context 'with an explicit network specified for docker build' do
+    let(:network) { 'samplenetwork' }
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        network: network
+      }
+    end
+    it 'should pass the network as an argument' do
+      expect(builder.send(:build_command)).to include("--network #{network}")
+    end
+  end
+
   [
     'cgroup-parent',
     'cpu-period',

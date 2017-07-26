@@ -53,6 +53,10 @@ PuppetX::Puppetlabs::ImageBuilder::Face.define(:docker, '0.1.0') do
       summary 'An authentication token used for autosigning master-built images'
     end
 
+    option '--network STRING' do
+      summary 'The Docker network to pass along to the docker build command'
+    end
+
     when_invoked do |*options|
       args = options.pop
       # no-cache is a boolean option, but Puppet cunningly convert anything begining with no
