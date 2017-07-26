@@ -115,6 +115,11 @@ module PuppetX
         default_to { false }
       end
 
+      option '--skip-puppet-install' do
+        summary 'If the base image already contains Puppet we can skip installing it'
+        default_to { false }
+      end
+
       option '--puppet-debug' do
         summary 'Pass the debug flag to the Puppet process used to build the container image'
         default_to { false }

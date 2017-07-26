@@ -30,6 +30,7 @@ acbuild --debug label add <%= name %> "<%= value %>"
   <% end %>
 <% end %>
 
+<% unless skip_puppet_install %>
 <% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
 acbuild --debug run -- apt-get update
@@ -56,6 +57,7 @@ acbuild run -- gem install puppet:"$PUPPET_VERSION" facter:"$FACTER_VERSION"
 acbuild run -- <%= puppet_path %> module install puppetlabs-apk
 # Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
 acbuild run -- rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
+<% end %>
 <% end %>
 <% end %>
 

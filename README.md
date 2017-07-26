@@ -390,6 +390,8 @@ OPTIONS:
   --rocker                       - Use Rocker as the build tool
   --[no-]show-diff               - Enable or disable showing the diff when
                                    running Puppet to build the image
+  --skip-puppet-install          - If the base image already contains Puppet we
+                                   can skip installing it
   --volume STRING                - A list of volumes to be added to the
                                    resulting image
 

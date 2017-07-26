@@ -11,6 +11,7 @@
 
 <% if apt_proxy %>ARG APT_PROXY<% end %>
 
+<% unless skip_puppet_install %>
 <% if os %>
 <% if os == 'ubuntu' or os == 'debian' %>
 RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/apt.conf.d/01proxy && echo 'Acquire::HTTPS::Proxy "false";' >> /etc/apt/apt.conf.d/01proxy && <% end %>apt-get update && \
@@ -48,6 +49,7 @@ RUN apk add --update \
 
 # Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
 RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
+<% end %>
 <% end %>
 <% end %>
 
