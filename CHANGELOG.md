@@ -1,3 +1,15 @@
+##2017-07-26 - Version 0.6.0
+
+* Adds the ability to specify a Docker network for the docker build
+  command
+* Can now skip the installation of Puppet if the base image already has
+  it installed
+
+This release also fixes an issue where a failure in the Puppet run
+during image build would not propogate the error so the command line
+exits with a non-zero exit code.
+
+
 ##2017-07-25 - Version 0.5.0
 
 Adding a couple of user requested features, specifically the ability to
