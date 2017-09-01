@@ -75,6 +75,9 @@ RUN apk add --update git && \
     <%= gem_path %> install r10k:"$R10K_VERSION" --no-ri --no-rdoc && \
     rm -rf /var/cache/apk/*
 <% end %>
+<% if r10k_yaml %>
+COPY r10k.yaml /r10k.yaml
+<% end %>
 COPY <%= puppetfile %> /Puppetfile
 RUN <%= r10k_path %> puppetfile install --moduledir /etc/puppetlabs/code/modules
 <% end %>
