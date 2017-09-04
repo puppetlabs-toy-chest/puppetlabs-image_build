@@ -124,6 +124,11 @@ module PuppetX
         summary 'Pass the debug flag to the Puppet process used to build the container image'
         default_to { false }
       end
+
+      option '--squash' do
+        summary 'Automatically squash all layers in the generated image'
+        default_to { false }
+      end
     end
   end
 end
