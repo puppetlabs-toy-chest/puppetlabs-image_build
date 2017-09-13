@@ -368,8 +368,12 @@ module PuppetX
         @context[:apt_proxy].nil? ? '' : "--build-arg APT_PROXY=#{@context[:apt_proxy]}"
       end
 
+      def squash_string
+        @context[:squash] ? '--squash' : ''
+      end
+
       def command_build_args
-        "#{autosign_string} #{apt_proxy_string} #{http_proxy_string} #{https_proxy_string} #{string_args}"
+        "#{autosign_string} #{apt_proxy_string} #{http_proxy_string} #{https_proxy_string} #{string_args} #{squash_string}"
       end
 
       def docker_network
