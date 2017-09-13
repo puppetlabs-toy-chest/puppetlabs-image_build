@@ -593,6 +593,7 @@ invalid
       '12.04' => 'precise'
     },
     debian: {
+      '9' => 'stretch',
       '8' => 'jessie',
       '7' => 'wheezy'
     }
