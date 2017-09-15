@@ -30,6 +30,11 @@ module PuppetX
         default_to { '2.5.5' }
       end
 
+      option '--r10k-yaml BOOLEAN' do
+        summary 'When yes, copies the r10k.yaml file to the container before running r10k'
+        default_to { false }
+      end
+
       option '--module-path PATH' do
         summary 'A path to a directory containing a set of modules to be copied into the image'
       end
@@ -122,6 +127,11 @@ module PuppetX
 
       option '--puppet-debug' do
         summary 'Pass the debug flag to the Puppet process used to build the container image'
+        default_to { false }
+      end
+
+      option '--squash' do
+        summary 'Automatically squash all layers in the generated image'
         default_to { false }
       end
     end

@@ -219,7 +219,9 @@ module PuppetX
                      end
         when 'debian'
           codename = case @context[:os_version]
-                     when 'latest', 'stable', 'stable-slim', 'stable-backports', 'jessie', 'jessie-slim', 'jessie-backports', %r{^8}
+                     when 'latest', 'stable', 'stable-slim', 'stable-backports', 'stretch', 'stretch-slim', 'stretch-backports', %r{^9}
+                       'stretch'
+                     when 'oldstable', 'oldstable-slim', 'oldstable-backports', 'jessie', 'jessie-slim', 'jessie-backports', %r{^8}
                        'jessie'
                      when 'sid', 'sid-slim'
                        'sid'
@@ -281,7 +283,7 @@ module PuppetX
       end
 
       def determine_repository_details
-        puppet5 = @context[:puppet_agent_version].to_f >= 5 ? true : false
+        puppet5 = @context[:puppet_agent_version].to_f >= 5
         @context[:package_address], @context[:package_name] = case @context[:os]
                                                               when 'ubuntu', 'debian'
                                                                 if puppet5
@@ -366,8 +368,12 @@ module PuppetX
         @context[:apt_proxy].nil? ? '' : "--build-arg APT_PROXY=#{@context[:apt_proxy]}"
       end
 
+      def squash_string
+        @context[:squash] ? '--squash' : ''
+      end
+
       def command_build_args
-        "#{autosign_string} #{apt_proxy_string} #{http_proxy_string} #{https_proxy_string} #{string_args}"
+        "#{autosign_string} #{apt_proxy_string} #{http_proxy_string} #{https_proxy_string} #{string_args} #{squash_string}"
       end
 
       def docker_network
