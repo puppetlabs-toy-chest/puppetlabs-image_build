@@ -270,10 +270,16 @@ First install the dependent modules into the local environment:
 
     r10k puppetfile install --moduledir code/environments/production/modules
 
+Create an `autosign.conf` file with the following:
+
+```
+*.dockerbuilder.*
+```
+
 Then, from the `examples/master` folder, use Docker to run an instance
 of Puppet Server:
 
-    docker run --name puppet -P --hostname puppet -v $(pwd)/code:/etc/puppetlabs/code puppet/puppetserver-standalone
+    docker run --name puppet -P --hostname puppet -v $(pwd)/code:/etc/puppetlabs/code -v $(pwd)/autosign.conf:/etc/puppetlabs/puppet/autosign.conf puppet/puppetserver-standalone
 
 Determine the port on which the Puppet Server is exposed locally:
 
@@ -285,9 +291,6 @@ and {port} in the following with your own values.
     puppet docker dockerfile --master {ip}:{port} --image-name puppet/node1 --expose 80 --cmd nginx
 
 This should use the code on the Puppet Master to build the image.
-
-Note that this currently assumes the requested certificate is autosigned
-in some way, expect more guidance on that in the future.
 
 
 ### Minimizing image size with Rocker
