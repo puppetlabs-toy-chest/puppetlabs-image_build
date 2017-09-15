@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-image_build",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": "Puppet",
   "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
