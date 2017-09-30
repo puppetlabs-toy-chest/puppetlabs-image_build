@@ -130,7 +130,7 @@ module PuppetX
           rescue Psych::SyntaxError
             raise InvalidContextError, "the metadata file #{default_config} does not appear to be valid YAML"
           end
-          @context = @context.merge(metadata).merge(host_config) if metadata.is_a?(Hash)
+          @context = metadata.merge(host_config).merge(@context) if metadata.is_a?(Hash)
         end
       end
 
