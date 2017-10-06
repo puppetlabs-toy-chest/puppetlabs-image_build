@@ -23,7 +23,6 @@ RUN <% if apt_proxy %>echo "Acquire::HTTP::Proxy \"$APT_PROXY\";" >> /etc/apt/ap
     rm <%= package_name %> && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$CODENAME" && \
-    apt-get remove --purge -y wget && \
     apt-get autoremove -y && \
     apt-get clean && \
     mkdir -p /etc/puppetlabs/facter/facts.d/ && \
