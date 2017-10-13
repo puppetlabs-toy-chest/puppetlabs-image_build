@@ -150,3 +150,5 @@ RUN <%= puppet_path %> module install puppetlabs-inventory && \
 <% if image_user && !image_user.empty? %>USER <%= image_user.to_s %><% end %>
 
 <% if rocker %>TAG <%= image_name %><% end %>
+
+WORKDIR /tmp
