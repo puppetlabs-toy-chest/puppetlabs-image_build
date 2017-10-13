@@ -1,6 +1,6 @@
 {
   "name": "nwolfe-image_build",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "author": "Puppet",
   "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
