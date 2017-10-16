@@ -1,12 +1,12 @@
 {
-  "name": "puppetlabs-image_build",
-  "version": "0.7.0",
+  "name": "nwolfe-image_build",
+  "version": "0.10.0",
   "author": "Puppet",
   "summary": "Build Docker and ACI images using Puppet code",
   "license": "Apache-2.0",
-  "source": "https://github.com/puppetlabs/puppetlabs-image_build.git",
-  "project_page": "https://github.com/puppetlabs/puppetlabs-image_build",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-image_build/issues",
+  "source": "https://github.com/nwolfe/puppetlabs-image_build.git",
+  "project_page": "https://github.com/nwolfe/puppetlabs-image_build",
+  "issues_url": "https://github.com/nwolfe/puppetlabs-image_build/issues",
   "dependencies": [
   
   ],
