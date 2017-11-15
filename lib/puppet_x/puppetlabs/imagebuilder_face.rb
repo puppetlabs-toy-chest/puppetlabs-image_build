@@ -22,7 +22,7 @@ module PuppetX
 
       option '--puppet-agent-version STRING' do
         summary 'Version of the Puppet Agent package to install'
-        default_to { '5.2.0' }
+        default_to { '5.3.3' }
       end
 
       option '--r10k-version STRING' do
