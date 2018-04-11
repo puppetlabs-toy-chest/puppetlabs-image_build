@@ -14,6 +14,9 @@ Service <| |> { provider => dummy }
 class { 'elasticsearch': }
 elasticsearch::instance { 'es-01':
   status => 'unmanaged',
+  config =>  {
+    'network.host' =>  '0.0.0.0'
+  }
 }
 
 $elasticsearch_cmd = "#!/bin/bash -e\n/usr/share/elasticsearch/bin/elasticsearch -Des.default.path.conf=/etc/elasticsearch/es-01/ -Des.insecure.allow.root=true"
