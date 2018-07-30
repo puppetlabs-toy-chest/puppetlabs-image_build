@@ -39,6 +39,11 @@ module PuppetX
         summary 'A path to a directory containing a set of modules to be copied into the image'
       end
 
+      option '--environment STRING' do
+        summary 'Puppet environment to use'
+        default_to { 'production' }
+      end
+
       option '--expose STRING' do
         summary 'A list of ports to be exposed by the resulting image'
       end
