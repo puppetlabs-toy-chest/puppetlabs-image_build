@@ -347,6 +347,7 @@ USAGE: puppet docker <action> [--from STRING]
 [--config-file STRING]
 [--config-directory STRING]
 [--master STRING]
+[--puppet-env STRING]
 
 Build Docker images and Dockerfiles using Puppet code
 
@@ -388,6 +389,7 @@ OPTIONS:
                                    install
   --puppet-debug                 - Pass the debug flag to the Puppet process
                                    used to build the container image
+  --puppet-env STRING		 - Puppet environment used. Defaults to production
   --puppetfile STRING            - Enable use of Puppetfile to install
                                    dependencies during build
   --r10k-version STRING          - Version of R10k to use for installing modules
