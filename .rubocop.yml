@@ -326,7 +326,10 @@ Style/StringLiterals:
 Style/TrailingCommaInArguments:
   Enabled: True
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: True
+
+Style/TrailingCommaInHashLiteral:
   Enabled: True
 
 Style/GlobalVars:
