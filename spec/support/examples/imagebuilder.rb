@@ -110,6 +110,19 @@ shared_examples 'an image builder' do
     end
   end
 
+  context 'with a version greater than 6 specified' do
+    let(:args) do
+      {
+        from: from,
+        image_name: image_name,
+        puppet_agent_version: 6
+      }
+    end
+    it 'should use the correct package URL' do
+      expect(context[:package_address]).to eq('https://apt.puppetlabs.com/puppet6-release-"$CODENAME".deb')
+    end
+  end
+
   context 'with a version less than 5 specified' do
     let(:args) do
       {
