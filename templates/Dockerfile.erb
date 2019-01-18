@@ -54,7 +54,7 @@ RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockde
 <% end %>
 
 <% if use_factfile %>
-    COPY <%= factfile %> /etc/puppetlabs/facter/facts.d/custom_facts.txt
+        COPY <%= factfile %> /etc/puppetlabs/facter/facts.d/<%= factfile.split('/')[-1] %>
 <% end %>
 
 <% if use_puppetfile && !master %>
